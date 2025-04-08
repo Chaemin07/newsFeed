@@ -1,4 +1,4 @@
-package com.example.newsfeedproject.dto;
+package com.example.newsfeedproject.dto.likedto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

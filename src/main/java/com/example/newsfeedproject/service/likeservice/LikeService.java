@@ -1,11 +1,11 @@
-package com.example.newsfeedproject.service;
+package com.example.newsfeedproject.service.likeservice;
 
-import com.example.newsfeedproject.dto.LikeRequestDto;
-import com.example.newsfeedproject.dto.LikeType;
-import com.example.newsfeedproject.entity.CommentLike;
-import com.example.newsfeedproject.entity.NewsFeedLike;
-import com.example.newsfeedproject.repository.CommentLikeRepository;
-import com.example.newsfeedproject.repository.NewsFeedLikeRepository;
+import com.example.newsfeedproject.dto.likedto.LikeRequestDto;
+import com.example.newsfeedproject.dto.likedto.LikeType;
+import com.example.newsfeedproject.entity.likeentity.CommentLike;
+import com.example.newsfeedproject.entity.likeentity.NewsFeedLike;
+import com.example.newsfeedproject.repository.likerepository.CommentLikeRepository;
+import com.example.newsfeedproject.repository.likerepository.NewsFeedLikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

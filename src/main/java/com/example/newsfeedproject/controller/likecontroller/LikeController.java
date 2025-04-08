@@ -1,8 +1,8 @@
-package com.example.newsfeedproject.controller;
+package com.example.newsfeedproject.controller.likecontroller;
 
-import com.example.newsfeedproject.dto.LikeRequestDto;
-import com.example.newsfeedproject.dto.LikeType;
-import com.example.newsfeedproject.service.LikeService;
+import com.example.newsfeedproject.dto.likedto.LikeRequestDto;
+import com.example.newsfeedproject.dto.likedto.LikeType;
+import com.example.newsfeedproject.service.likeservice.LikeService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

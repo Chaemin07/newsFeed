@@ -1,11 +1,11 @@
-package com.example.newsfeedproject.entity;
+package com.example.newsfeedproject.entity.likeentity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 
 @Getter
 @Entity
-@Table(name = "commentLike")
+@Table(name = "comment_Like")
 public class CommentLike {
 
     @Id
