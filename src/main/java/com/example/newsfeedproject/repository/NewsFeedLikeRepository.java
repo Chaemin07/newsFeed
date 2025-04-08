@@ -6,9 +6,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NewsFeedLikeRepository extends JpaRepository<NewsFeedLike, Long> {
-    boolean existsByUserIdAndNewsFeed(Long userId, NewsFeed newsFeed);
+    boolean existsByUserAndNewsFeed(User user, NewsFeed newsFeed);
 
-    NewsFeedLike findByUserIdAndNewsFeed(long userId, NewsFeed newsFeed);
+    NewsFeedLike findByUserAndNewsFeed(User user, NewsFeed newsFeed);
 
     long countByNewsFeed_Id(long id);
+
+
+
+
 }

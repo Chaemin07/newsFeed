@@ -12,14 +12,16 @@ public class NewsFeedLike {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private long userId;
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "newsFeedId")
     private NewsFeed newsFeed;
 
-    public NewsFeedLike(long userId, NewsFeed newsFeed) {
-        this.userId = userId;
+    public NewsFeedLike(User user, NewsFeed newsFeed) {
+        this.user = user;
         this.newsFeed = newsFeed;
     }
 
