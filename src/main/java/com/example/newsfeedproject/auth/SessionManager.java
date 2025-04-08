@@ -77,6 +77,24 @@ public class SessionManager {
         return session != null && getLoginUser(session) != null;
     }
 
+    /** TODO 전역 예외처리 핸들러로 처리하자, Http상태코드도 추가해서 예외 내보내자
+     * 로그인 여부를 검증하고 로그인된 사용자 정보를 반환합니다.
+     *
+     * <p>세션이 없거나, 세션에 로그인 정보가 없는 경우 예외를 발생시킵니다.
+     * 인증이 필요한 요청에서 사용자 정보를 안전하게 가져올 때 사용합니다.</p>
+     *
+     * @param request 현재 HTTP 요청 객체
+     * @return 로그인된 사용자 정보 {@link LoginResponseDto}
+     * @throws RuntimeException 로그인되지 않은 경우
+     */
+    public static LoginResponseDto validateLogin(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (!isLogin(session)) {
+            throw new RuntimeException("로그인 상태가 아닙니다!");
+        }
+        return getLoginUser(session);
+    }
+
     /**
      * HttpServletRequest로부터 로그인된 사용자 정보를 조회합니다.
      * <p>
