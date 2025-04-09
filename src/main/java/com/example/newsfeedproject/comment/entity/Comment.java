@@ -2,6 +2,7 @@ package com.example.newsfeedproject.comment.entity;
 
 
 import jakarta.persistence.*;
+
 import lombok.Getter;
 
 @Getter

@@ -35,7 +35,7 @@ public class CommentService {
         comment.getModifiedAt());
   }
 
-//좋아요&답글 수 갱신기. 예시코드이므로 오류 가능성 있음.
+//좋아요&답글 수 갱신기. 예시코드이므로 오류 가능성 있음. merge 전/후로 코드 수정 필요, 더미테스트 통과.
   public void updateSubs(Long parentId,Long parentType){
   try{
     Long likes = likesRepository.countByParentIdAndParentType(parentId, parentType);
