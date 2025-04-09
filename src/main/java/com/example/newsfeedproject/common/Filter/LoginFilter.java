@@ -33,7 +33,7 @@ public class LoginFilter implements Filter {
      * 로그인 없이 접근 가능한 URI 목록 (화이트리스트)
      * 이 경로들은 인증 검사에서 제외됩니다.
      */
-    private static final String[] WHITE_LIST = {"/users", "/login", "/login-check"};
+    private static final String[] WHITE_LIST = {"/users", "/auth/login"};
 
     /**
      * 로그인 여부를 확인하는 필터 로직.
