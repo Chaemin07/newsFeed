@@ -21,7 +21,9 @@ public class LikeController {
     @PostMapping
     public ResponseEntity<String> postLike(@RequestBody LikeRequestDto request, HttpSession session) {
 
-        long userId = (long) session.getAttribute("userId");
+        LoginResponseDto user = (LoginResponseDto) session.getAttribute(LOGIN_USER);
+
+        long userId = user.getId();
 
         likeService.postLike(request, userId);
 

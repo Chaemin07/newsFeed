@@ -21,7 +21,9 @@ public class FollowController {
     @PostMapping
     public ResponseEntity<String> postFollow(@RequestBody FollowRequestDto request, HttpSession session) {
 
-        long followerId = (long) session.getAttribute("userId");
+        LoginResponseDto follower = (LoginResponseDto) session.getAttribute(LOGIN_USER);
+
+        long followerId = follower.getId();
 
         boolean follow = followService.postFollow(followerId, request.getFollowingId());
 
