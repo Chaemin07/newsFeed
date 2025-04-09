@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class UserProfileResponse {
+public class gUserProfileResponse {
 
 	private Long id;
 	private String email;
