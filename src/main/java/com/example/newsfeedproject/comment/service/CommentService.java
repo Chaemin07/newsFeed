@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CommentService {
   private final CommentRepository commentRepository;
-  private final LikesRepository likesRepository;
-  //좋아요 저장소 연결용(예시코드이므로 수정필요)
+//  private final LikesRepository likesRepository; //더미저장소 연결했던 코드입니다 실제 레퍼지토리랑 연결 필요.
+
   //LikesRepository likesrepository;
   public CommentResponseDto save(Long parentId, Long parentType, String username, String contents) {//저장
     Comment comment = new Comment(parentId, parentType, 0L, username, contents, 0L,"active");
@@ -40,7 +40,7 @@ public class CommentService {
 //좋아요&답글 수 갱신기. 예시코드이므로 오류 가능성 있음. merge 전/후로 코드 수정 필요, 더미테스트 통과.
   public void updateSubs(Long parentId,Long parentType){
   try{
-    Long likes = likesRepository.countByParentIdAndParentType(parentId, parentType);
+    Long likes = likesRepository.countByParentIdAndParentType(parentId, parentType); //이부분이 작동 중지됩니다-테스트코드용
     Comment findComment = commentRepository.findByParentIdAndParentType(parentId, parentType);
     if (parentType == 0) {
       Long answers = commentRepository.countByParentIdAndParentType(parentId, 1L);
