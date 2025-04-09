@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LikesRepository extends JpaRepository<likes, Long> {
 
-  Long countByCommentIdAndParentType(Long parentId, Long parentType);
+  Long countByParentIdAndParentType(Long parentId, Long parentType);
 }

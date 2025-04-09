@@ -36,14 +36,21 @@ public class CommentService {
   }
 
 //좋아요&답글 수 갱신기. 예시코드이므로 오류 가능성 있음.
-  public void updateSubs(Long commentId,Long parentType){
+  public void updateSubs(Long parentId,Long parentType){
   try{
-    Long likes = likesRepository.countByCommentIdAndParentType(commentId, parentType);
-    Comment findComment = commentRepository.findByCommentIdOrElseThrow(commentId);
-    Long answers = commentRepository.findByCommentIdAndParentType(commentId, parentType);
-    findComment.UpdateSubs(likes, answers);
+    Long likes = likesRepository.countByParentIdAndParentType(parentId, parentType);
+    Comment findComment = commentRepository.findByParentIdAndParentType(parentId, parentType);
+    if (parentType == 0) {
+      Long answers = commentRepository.countByParentIdAndParentType(parentId, 1L);
+      findComment.UpdateSubs(likes, answers);
+      commentRepository.save(findComment);
+    } else if (parentType ==1) {
+      Long answers = 0L;
+      findComment.UpdateSubs(likes, answers);
+      commentRepository.save(findComment);
+    } else throw new MismatchException(HttpStatus.BAD_REQUEST,"잘못된 입력값입니다");
 
-    }catch(Exception e){log.error("Exception error: 갱신기 오류발생!!");}
+  }catch(Exception e){log.error("Exception error: 갱신기 오류발생!!");}
   }
 
 
@@ -63,13 +70,14 @@ public class CommentService {
   }
 
   public void updateComment(Long commentId, String contents) {
-    Comment findSchedule = commentRepository.findByCommentIdOrElseThrow(commentId);
-    findSchedule.UpdateComment(commentId, contents);
-  }
+    Comment findComment = commentRepository.findByCommentIdOrElseThrow(commentId);
+    findComment.UpdateComment(commentId, contents);
+    commentRepository.save(findComment);
+}
 
   public void deleteComment(Long commentId) {
-    Comment findSchedule = commentRepository.findByCommentIdOrElseThrow(commentId);
-    commentRepository.delete(findSchedule);
+    Comment findComment = commentRepository.findByCommentIdOrElseThrow(commentId);
+    commentRepository.delete(findComment);
   }
 
   public List<CommentResponseDto> findAllByParentId(Long parentId,Long parentType) {//댓글 or 답글 전체 조회
