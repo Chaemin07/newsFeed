@@ -1,28 +1,45 @@
 package com.example.newsfeedproject.dto;
 
+import com.example.newsfeedproject.entity.Comment;
 import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
 public class CommentResponseDto {
 
-  private final Long feedId;
+  private final Long parentId;
   private final Long parentType;
   private final Long likes;
   private final String username;
-  private final String comments;
+  private final String contents;
   private final LocalDateTime createdAt;
   private final LocalDateTime modifiedAt;
 
-  public CommentResponseDto(Long feedId, Long parentType, Long likes, String username, String comments,
-      LocalDateTime createdAt, LocalDateTime modifiedAt) {
-    this.feedId = feedId;
+  public CommentResponseDto(
+      Long parentId,
+      Long parentType,
+      Long likes,
+      String username,
+      String contents,
+      LocalDateTime createdAt,
+      LocalDateTime modifiedAt) {
+    this.parentId = parentId;
     this.parentType = parentType;
     this.likes = likes;
     this.username = username;
-    this.comments = comments;
+    this.contents = contents;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
   }
+
+  public static CommentResponseDto toDto(Comment comment) {
+    return new CommentResponseDto(
+        comment.getParentId(),
+        comment.getParentType(),
+        comment.getLikes(),
+        comment.getUsername(),
+        comment.getContents(),
+        comment.getCreatedAt(),
+        comment.getModifiedAt());
+  }
 }
-//RD 다 갈아엎기
