@@ -24,7 +24,7 @@ import jakarta.validation.constraints.NotNull;
 
 
 @RestController
-//@RequestMapping("/newsFeed/comment") //todo: 1기본테스트 C1425 2: 정오 전에 commit C1000  3: 더미테스트@ 4: session에서 userId받아오기(물어보자)
+//@RequestMapping("/newsFeed/comment") //todo: session 에서 userId 받아오기(물어보자)
 @RequestMapping("/comment")
 @RequiredArgsConstructor
 @Validated
@@ -62,6 +62,7 @@ public class CommentController {
 
   @PatchMapping("/{commentId}")//수정
   public ResponseEntity<CommentResponseDto> updateComment(@PathVariable @NotNull @Min(1) Long commentId,@Valid @RequestBody CommentUpdateRequestDto requestDto) {
+    //commentService.findByCommentId(commentId);
     commentService.updateComment(commentId, requestDto.getContents());
     return new ResponseEntity<>(HttpStatus.OK);
   }

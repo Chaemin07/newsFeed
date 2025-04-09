@@ -25,17 +25,20 @@ public class Comment extends BaseEntity {
   private String contents;
   @Column
   private Long answers;
+  @Column
+  private String status;
 
   public Comment(){
   }
 
-  public Comment(Long parentId, Long parentType, Long likes, String username, String contents, Long answers) {
+  public Comment(Long parentId, Long parentType, Long likes, String username, String contents, Long answers, String status) {
     this.parentId=parentId;
     this.parentType=parentType;
     this.likes=likes;
     this.username=username;
     this.contents=contents;
     this.answers=answers;
+    this.status=status;
   }
 
   public void UpdateComment(Long commentId, String contents){
