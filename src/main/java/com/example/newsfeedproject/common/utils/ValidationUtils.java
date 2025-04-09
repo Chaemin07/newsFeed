@@ -1,7 +1,8 @@
 /*이메일 형식, 비밀번호 유효성 검사 등 사용자 입력값에 대한 검증 로직을 제공하는 유틸리티 클래스.
+비밀번호 형식 검사 정규식을 사용하여 영문 대소문자 + 숫자 + 특수문자 최소 1개 포함 & 8자 이상의 조건을 만족하는지 검증
  */
 
-package com.example.newsfeedproject.user.util;
+package com.example.newsfeedproject.common.utils;
 
 import java.util.regex.Pattern;
 

@@ -1,4 +1,4 @@
-package com.example.newsfeedproject.exception;
+package com.example.newsfeedproject.common.exception;
 
 public class CustomException extends RuntimeException {
 	private final ErrorCode errorCode;

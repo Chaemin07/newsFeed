@@ -1,4 +1,4 @@
-package com.example.newsfeedproject.exception;
+package com.example.newsfeedproject.common.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
