@@ -1,12 +1,9 @@
-package com.example.newsfeedproject.controller;
+package com.example.newsfeedproject.comment.controller;
 
-import com.example.newsfeedproject.dto.CommentRequestDto;
-import com.example.newsfeedproject.dto.CommentResponseDto;
-import com.example.newsfeedproject.dto.CommentUpdateRequestDto;
-import com.example.newsfeedproject.entity.Comment;
-import com.example.newsfeedproject.service.CommentService;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import com.example.newsfeedproject.comment.dto.CommentRequestDto;
+import com.example.newsfeedproject.comment.dto.CommentResponseDto;
+import com.example.newsfeedproject.comment.dto.CommentUpdateRequestDto;
+import com.example.newsfeedproject.comment.service.CommentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.example.newsfeedproject.handler;
+package com.example.newsfeedproject.comment.handler;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;

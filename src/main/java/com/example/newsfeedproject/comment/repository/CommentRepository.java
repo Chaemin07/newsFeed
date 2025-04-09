@@ -1,6 +1,6 @@
-package com.example.newsfeedproject.repository;
+package com.example.newsfeedproject.comment.repository;
 
-import com.example.newsfeedproject.entity.Comment;
+import com.example.newsfeedproject.comment.entity.Comment;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
