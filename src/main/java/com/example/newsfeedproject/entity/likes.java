@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 @Entity
 @Table(name = "likes")
-public class likes extends BaseEntity{
+public class likes{
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

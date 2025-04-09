@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-//@RequestMapping("/newsFeed/comment") //todo: 1기본테스트 2: 정오 전에 commit 3: session에서 userId받아오기(물어보자)
+//@RequestMapping("/newsFeed/comment") //todo: 1기본테스트 C1425 2: 정오 전에 commit C1000  3: 더미테스트@ 4: session에서 userId받아오기(물어보자)
 @RequestMapping("/comment")
 @RequiredArgsConstructor
 public class CommentController {
