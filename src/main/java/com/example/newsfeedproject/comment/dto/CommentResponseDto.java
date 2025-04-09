@@ -1,6 +1,6 @@
-package com.example.newsfeedproject.dto;
+package com.example.newsfeedproject.comment.dto;
 
-import com.example.newsfeedproject.entity.Comment;
+import com.example.newsfeedproject.comment.entity.Comment;
 import java.time.LocalDateTime;
 import lombok.Getter;
 

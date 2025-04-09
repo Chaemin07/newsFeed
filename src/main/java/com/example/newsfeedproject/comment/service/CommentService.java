@@ -1,11 +1,11 @@
-package com.example.newsfeedproject.service;
+package com.example.newsfeedproject.comment.service;
 
 
-import com.example.newsfeedproject.dto.CommentResponseDto;
-import com.example.newsfeedproject.entity.Comment;
-import com.example.newsfeedproject.handler.MismatchException;
-import com.example.newsfeedproject.repository.CommentRepository;
-import com.example.newsfeedproject.repository.LikesRepository;
+import com.example.newsfeedproject.comment.dto.CommentResponseDto;
+import com.example.newsfeedproject.comment.entity.Comment;
+import com.example.newsfeedproject.comment.handler.MismatchException;
+import com.example.newsfeedproject.comment.repository.CommentRepository;
+import com.example.newsfeedproject.comment.repository.LikesRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

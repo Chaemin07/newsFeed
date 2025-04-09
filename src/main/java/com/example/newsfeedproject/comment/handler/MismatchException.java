@@ -1,4 +1,4 @@
-package com.example.newsfeedproject.handler;
+package com.example.newsfeedproject.comment.handler;
 
 
 import org.springframework.http.HttpStatusCode;

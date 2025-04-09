@@ -1,4 +1,4 @@
-package com.example.newsfeedproject.dto;
+package com.example.newsfeedproject.comment.dto;
 
 import lombok.Getter;
 
