@@ -11,7 +11,6 @@ import lombok.Getter;
 public class CommentResponseDto {
 
   private final Long parentId;
-
   private final Long parentType;
   private final Long likes;
   private final String username;

@@ -8,6 +8,7 @@ import com.example.newsfeedproject.comment.repository.CommentRepository;
 import com.example.newsfeedproject.comment.repository.LikesRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ public class CommentService {
   //좋아요 저장소 연결용(예시코드이므로 수정필요)
   //LikesRepository likesrepository;
   public CommentResponseDto save(Long parentId, Long parentType, String username, String contents) {//저장
-    Comment comment = new Comment(parentId, parentType, 0L, username, contents, 0L);
+    Comment comment = new Comment(parentId, parentType, 0L, username, contents, 0L,"active");
     commentRepository.save(comment);
     return new CommentResponseDto(
         comment.getParentId(),
@@ -32,7 +33,8 @@ public class CommentService {
         comment.getUsername(),
         comment.getContents(),
         comment.getCreatedAt(),
-        comment.getModifiedAt());
+        comment.getModifiedAt()
+    );
   }
 
 //좋아요&답글 수 갱신기. 예시코드이므로 오류 가능성 있음. merge 전/후로 코드 수정 필요, 더미테스트 통과.
@@ -71,6 +73,9 @@ public class CommentService {
 
   public void updateComment(Long commentId, String contents) {
     Comment findComment = commentRepository.findByCommentIdOrElseThrow(commentId);
+    if (!Objects.equals(findComment.getStatus(), "active")) {
+      throw new MismatchException(HttpStatus.BAD_REQUEST, "해당 글은 이미 삭제되었습니다.");
+    }
     findComment.UpdateComment(commentId, contents);
     commentRepository.save(findComment);
 }
