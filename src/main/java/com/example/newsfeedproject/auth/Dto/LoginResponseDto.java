@@ -26,4 +26,6 @@ public class LoginResponseDto {
      */
     private String userEmail;
 
+    private boolean isActive;
+
 }
