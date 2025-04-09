@@ -6,6 +6,8 @@ import com.example.newsfeedproject.like.entity.likeentity.CommentLike;
 import com.example.newsfeedproject.like.entity.likeentity.NewsFeedLike;
 import com.example.newsfeedproject.like.repository.likerepository.CommentLikeRepository;
 import com.example.newsfeedproject.like.repository.likerepository.NewsFeedLikeRepository;
+import com.example.newsfeedproject.user.entity.User;
+import com.example.newsfeedproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

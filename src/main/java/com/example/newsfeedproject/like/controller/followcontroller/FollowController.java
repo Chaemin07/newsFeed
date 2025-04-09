@@ -1,5 +1,6 @@
 package com.example.newsfeedproject.like.controller.followcontroller;
 
+import com.example.newsfeedproject.auth.Dto.LoginResponseDto;
 import com.example.newsfeedproject.like.dto.followdto.FollowListResponseDto;
 import com.example.newsfeedproject.like.dto.followdto.FollowRequestDto;
 import com.example.newsfeedproject.like.service.followservice.FollowService;
@@ -8,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import static com.example.newsfeedproject.auth.SessionManager.LOGIN_USER;
 
 @RestController
 @RequestMapping("/follows")
@@ -23,7 +24,7 @@ public class FollowController {
 
         LoginResponseDto follower = (LoginResponseDto) session.getAttribute(LOGIN_USER);
 
-        long followerId = follower.getId();
+        long followerId = follower.getUserId();
 
         boolean follow = followService.postFollow(followerId, request.getFollowingId());
 

@@ -1,5 +1,6 @@
 package com.example.newsfeedproject.like.entity.followentity;
 
+import com.example.newsfeedproject.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -27,4 +28,5 @@ public class Follow {
 
     public Follow() {
     }
+
 }

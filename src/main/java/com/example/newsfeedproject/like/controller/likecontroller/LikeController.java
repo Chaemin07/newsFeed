@@ -1,5 +1,6 @@
 package com.example.newsfeedproject.like.controller.likecontroller;
 
+import com.example.newsfeedproject.auth.Dto.LoginResponseDto;
 import com.example.newsfeedproject.like.dto.likedto.LikeRequestDto;
 import com.example.newsfeedproject.like.dto.likedto.LikeType;
 import com.example.newsfeedproject.like.service.likeservice.LikeService;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import static com.example.newsfeedproject.auth.SessionManager.LOGIN_USER;
 
 @Validated
 @RestController
@@ -23,7 +25,7 @@ public class LikeController {
 
         LoginResponseDto user = (LoginResponseDto) session.getAttribute(LOGIN_USER);
 
-        long userId = user.getId();
+        long userId = user.getUserId();
 
         likeService.postLike(request, userId);
 
