@@ -99,7 +99,7 @@ public class LikeService {
                 Comment comment = commentRepository.findById(likeId)
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."));
                 // 404 DB 내 데이터 존재 x
-                NewsFeed checkFeed = newsFeedRepository.findById(comment.getFeed_Id())
+                NewsFeed checkFeed = newsFeedRepository.findById(comment.getParentId())
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
                 if(checkFeed.getUser().equals(userId)) {
                     // 400 본인이 작성한 댓글에 좋아요를 요청 시
