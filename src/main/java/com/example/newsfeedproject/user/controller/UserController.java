@@ -26,8 +26,6 @@ public class UserController {
 	 * @param signupRequest 사용자 정보 (이메일, 비밀번호, 이름 등)
 	 * @return 성공 시 200 OK
 	 */
-
-
 	@PostMapping("/signup")
 	public ResponseEntity<Void> join(@RequestBody UserSignupRequest signupRequest) {
 		userService.signup(signupRequest);
@@ -69,7 +67,7 @@ public class UserController {
 	public ResponseEntity<Void> updatePassword(HttpServletRequest request,
 			@RequestBody PasswordUpdateRequest passwordUpdateRequest) {
 		Long userId = (Long) request.getSession().getAttribute("userId");
-		userService.updatePassword(userId, passwordUpdateRequest);ㅎ
+		userService.updatePassword(userId, passwordUpdateRequest);
 		return ResponseEntity.ok().build();
 	}
 
