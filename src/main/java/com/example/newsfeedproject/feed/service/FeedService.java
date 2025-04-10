@@ -52,7 +52,7 @@ public class FeedService {
 
     /**
      * 단일 게시글 조회
-     * 단일 게시글 조회 때 좋아요와 댓글 수가 추가될거임 -> 아직 안함
+     * 단일 게시글 조회 때 좋아요와 댓글 수가 추가될거임 -> 아직 안함!
      */
     @Transactional(readOnly = true)
     public FeedResponseDto getFeed(Long id) {

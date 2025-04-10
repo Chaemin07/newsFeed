@@ -23,23 +23,23 @@ public class FeedController {
     private final FeedService feedService;
     private final UserService userService;
 
+    // httpsession session 사용하는 반복적인 코드를 메서드로 설정함
+    private User getLoginUser(HttpSession session) {
+        LoginResponseDto dto = (LoginResponseDto) session.getAttribute(LOGIN_USER);
+        return userService.findById(dto.getUserId());
+    }
+
     /**
      * 게시글 생성
-     * @SessionAttribute("loginUser") 세션에 저장된 로그인 정보 가져오기
      */
-    @PostMapping
-    public ResponseEntity<FeedResponseDto> createFeed(@SessionAttribute("loginUser") User loginUser,
     public ResponseEntity<FeedResponseDto> createFeed(HttpSession session,
                                                       @RequestBody FeedRequestDto requestDto) {
-        LoginResponseDto user = (LoginResponseDto) session.getAttribute(LOGIN_USER);
-        long userId = user.getUserId();
-        User loginUser = userService.findById(userId);
+        User loginUser = getLoginUser(session);
         return ResponseEntity.status(201).body(feedService.createFeed(loginUser, requestDto));
     }
 
     /**
      * 게시글 전체 조회 (페이징 + 정렬)
-     *
      */
     @GetMapping
     public ResponseEntity<Page<FeedResponseDto>> getAllFeeds(Pageable pageable) {
@@ -61,8 +61,9 @@ public class FeedController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<FeedResponseDto> updateFeed(@PathVariable Long id,
-                                                      @SessionAttribute("loginUser") User loginUser,
+                                                      HttpSession session,
                                                       @RequestBody FeedRequestDto requestDto) {
+        User loginUser = getLoginUser(session);
         return ResponseEntity.ok(feedService.updateFeed(id, loginUser, requestDto));
     }
 
@@ -71,9 +72,11 @@ public class FeedController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFeed(@PathVariable Long id,
-                                           @SessionAttribute("loginUser") User loginUser) {
+                                           HttpSession session) {
+        User loginUser = getLoginUser(session);
         feedService.deleteFeed(id, loginUser);
+
+        // 200OK 상태 코드로만 응답, 본문은 없게
         return ResponseEntity.ok().build();
-        // 200 OK 상태 코드로만 응답, 본문은 없게
     }
 }
