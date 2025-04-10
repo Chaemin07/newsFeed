@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.PatternMatchUtils;
 
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -32,9 +33,11 @@ public class LoginFilter implements Filter {
      * 로그인 없이 접근 가능한 URI 목록 (화이트리스트)
      * 이 경로들은 인증 검사에서 제외됩니다.
      */
-    private static final String[] WHITE_LIST = {"/api/users/signup", "/auth/login"};
-//    private static final String[] WHITE_LIST = {"/**"};
-
+    // 회원가입, 로그인 화이트 리스트
+    private static final List<String> WHITE_LIST = List.of(
+            "/api/users/signup",
+            "/auth/login"
+    );
     /**
      * 로그인 여부를 확인하는 필터 로직.
      * 인증이 필요한 URI에 대해 로그인된 세션이 없을 경우 예외를 발생시킵니다.
@@ -54,18 +57,14 @@ public class LoginFilter implements Filter {
         String requestURI = httpRequest.getRequestURI();
 
         try {
-            log.info("로그인 필터 로직 실행 - 요청 URI: {}", requestURI);
             if (!isWhiteList(requestURI)) {
                 LoginResponseDto loggedInUser = SessionManager.getLoggedInUser((HttpServletRequest) request);
                 log.info("로그인된 사용자 ID {}, 요청URI: {}", loggedInUser.getUserId(), requestURI);
             }
-
         } catch (RuntimeException e) {
             log.info("로그인되지 않은 사용자입니다!");
         }
 
-        log.info("로그인 필터 로직 끝 - 요청 URI: {}", requestURI);
-        
         // 로그인된 사용자 또는 화이트리스트 경로일 경우 다음 필터로 요청 전달
         chain.doFilter(request, response);
     }
@@ -79,7 +78,7 @@ public class LoginFilter implements Filter {
      */
     private boolean isWhiteList(String requestURI) {
 
-        return PatternMatchUtils.simpleMatch(WHITE_LIST, requestURI);
+        return PatternMatchUtils.simpleMatch(WHITE_LIST.toArray(new String[0]), requestURI);
     }
 
 }
