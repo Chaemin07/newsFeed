@@ -3,6 +3,8 @@
 
 package com.example.newsfeedproject.user.service;
 
+import com.example.newsfeedproject.auth.Dto.LoginRequestDto;
+import com.example.newsfeedproject.auth.Dto.LoginResponseDto;
 import com.example.newsfeedproject.user.dto.*;
 import com.example.newsfeedproject.user.entity.User;
 import com.example.newsfeedproject.user.repository.UserRepository;
@@ -100,5 +102,10 @@ public class UserService {
 			throw new CustomException(ErrorCode.USER_NOT_FOUND);
 		}
 		return user;
+	}
+
+	// TODO 구현해야함
+	public LoginResponseDto authenticate(LoginRequestDto requestDto) {
+		return null;
 	}
 }
