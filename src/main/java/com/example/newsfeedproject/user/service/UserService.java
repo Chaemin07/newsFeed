@@ -3,6 +3,8 @@
 
 package com.example.newsfeedproject.user.service;
 
+import com.example.newsfeedproject.auth.dto.LoginRequestDto;
+import com.example.newsfeedproject.auth.dto.LoginResponseDto;
 import com.example.newsfeedproject.user.dto.*;
 import com.example.newsfeedproject.user.entity.User;
 import com.example.newsfeedproject.user.repository.UserRepository;
@@ -100,5 +102,29 @@ public class UserService {
 			throw new CustomException(ErrorCode.USER_NOT_FOUND);
 		}
 		return user;
+	}
+
+
+	public LoginResponseDto authenticate(LoginRequestDto requestDto) {
+
+		// 해당 email의 user없으면 throw
+		User user = userRepository.findByEmail(requestDto.getUserEmail())
+				.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+		// user 가져와서 비밀번호 비교
+		if (requestDto.getUserPassword() == null) {
+			throw new RuntimeException("비밀번호가 입력되지 않았습니다.");
+		}
+		if (!passwordEncoder.matches(requestDto.getUserPassword(), user.getPassword())) {
+			throw new CustomException(ErrorCode.INVALID_PASSWORD);
+		}
+
+		// 로그인 성공
+		LoginResponseDto responseDto = LoginResponseDto.builder()
+				.userId(user.getId())
+				.userName(user.getNickname()) // TODO 이름을 nickname으로 할건지, name으로 할건지
+				.userEmail(user.getEmail())
+				.isActive(!user.isDeleted())// 계정 활성 여부
+				.build();
+		return responseDto;
 	}
 }

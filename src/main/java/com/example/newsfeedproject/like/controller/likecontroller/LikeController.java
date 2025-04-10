@@ -1,6 +1,6 @@
 package com.example.newsfeedproject.like.controller.likecontroller;
 
-import com.example.newsfeedproject.auth.Dto.LoginResponseDto;
+import com.example.newsfeedproject.auth.dto.LoginResponseDto;
 import com.example.newsfeedproject.like.dto.likedto.LikeRequestDto;
 import com.example.newsfeedproject.like.dto.likedto.LikeType;
 import com.example.newsfeedproject.like.service.likeservice.LikeService;

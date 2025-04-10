@@ -1,6 +1,6 @@
 package com.example.newsfeedproject.like.controller.followcontroller;
 
-import com.example.newsfeedproject.auth.Dto.LoginResponseDto;
+import com.example.newsfeedproject.auth.dto.LoginResponseDto;
 import com.example.newsfeedproject.like.dto.followdto.FollowListResponseDto;
 import com.example.newsfeedproject.like.dto.followdto.FollowRequestDto;
 import com.example.newsfeedproject.like.service.followservice.FollowService;

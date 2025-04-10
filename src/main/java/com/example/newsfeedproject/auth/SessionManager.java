@@ -1,9 +1,8 @@
 package com.example.newsfeedproject.auth;
 
-import com.example.newsfeedproject.auth.Dto.LoginResponseDto;
+import com.example.newsfeedproject.auth.dto.LoginResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
