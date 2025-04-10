@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * 비활성 사용자(휴면 계정 또는 탈퇴 처리된 계정)의 요청을 차단하는 필터입니다.
@@ -27,6 +28,8 @@ import java.io.IOException;
  */
 @Slf4j
 public class ActiveUserOnlyFilter implements Filter {
+    // 회원가입, 로그인 화이트 리스트
+    private static final String[] WHITE_LIST = {"/api/users/signup","/auth/login"};
 
     /**
      * 요청을 필터링하여 비활성 사용자일 경우 403 Forbidden 응답을 반환합니다.
@@ -44,9 +47,15 @@ public class ActiveUserOnlyFilter implements Filter {
     ) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        LoginResponseDto loggedInUser = SessionManager.getLoggedInUser(httpRequest);
+        String requestURI = httpRequest.getRequestURI();
 
         try {
+            // 회원가입의 경우 체크 x
+            if ( Arrays.asList(WHITE_LIST).contains(requestURI)) {
+                chain.doFilter(request, response);
+                return;
+            }
+
             LoginResponseDto user = SessionManager.getLoggedInUser(httpRequest);
             // 로그인되어 세션은 있는 상태
             // 로그인 된 유저의 상태 true: 유효한 사용자, false: 탈회한 사용자

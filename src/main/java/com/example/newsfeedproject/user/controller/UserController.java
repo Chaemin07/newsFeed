@@ -1,20 +1,20 @@
 /* 사용자 관련 요청을 처리하는 REST 컨트롤러
- *회원가입, 프로필 조회/수정, 탈퇴 등을 정의
+ * 회원가입, 프로필 조회/수정, 탈퇴 등을 정의
  */
-
 
 package com.example.newsfeedproject.user.controller;
 
-import com.example.newsfeedproject.user.dto.UserSignupRequest;
-import com.example.newsfeedproject.user.dto.UpdateProfileRequest;
-import com.example.newsfeedproject.user.dto.UserProfileResponse;
+
+import com.example.newsfeedproject.user.dto.PasswordUpdateRequestDto;
+import com.example.newsfeedproject.user.dto.UpdateProfileRequestDto;
+import com.example.newsfeedproject.user.dto.UserDeleteRequestDto;
+import com.example.newsfeedproject.user.dto.UserProfileResponseDto;
+import com.example.newsfeedproject.user.dto.UserSignupRequestDto;
 import com.example.newsfeedproject.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.newsfeedproject.user.dto.UserDeleteRequest;
-import com.example.newsfeedproject.user.dto.PasswordUpdateRequest;
-
 
 @RestController
 @RequestMapping("/api/users")
@@ -22,38 +22,67 @@ import com.example.newsfeedproject.user.dto.PasswordUpdateRequest;
 public class UserController {
 
 	private final UserService userService;
-
+	/*
+	 * 회원가입 요청을 처리
+	 * @param signupRequest 사용자 정보 (이메일, 비밀번호, 이름 등)
+	 * @return 성공 시 200 OK
+	 */
 	@PostMapping("/signup")
-	public ResponseEntity<Void> join(@RequestBody UserSignupRequest request) {
-		userService.signup(request);
+	public ResponseEntity<Void> join(@RequestBody UserSignupRequestDto signupRequest) {
+		userService.signup(signupRequest);
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/{userId}")
-	public ResponseEntity<UserProfileResponse> getProfile(@PathVariable Long userId) {
-		UserProfileResponse response = userService.getProfile(userId);
+	/*
+	 * 사용자 프로필 조회 (다른 사람의 프로필도 가능)
+	 * @param targetUserId 조회할 사용자 ID
+	 * @return 조회된 사용자 프로필 정보
+	 */
+	@GetMapping("/{targetUserId}")
+	public ResponseEntity<UserProfileResponseDto> getProfile(@PathVariable Long targetUserId) {
+		UserProfileResponseDto response = userService.getProfile(targetUserId);
 		return ResponseEntity.ok(response);
 	}
 
-	@PutMapping("/{userId}")
-	public ResponseEntity<Void> updateProfile(
-			@PathVariable Long userId,
-			@RequestBody UpdateProfileRequest request) {
-		userService.updateProfile(userId, request);
-		return ResponseEntity.ok().build();
-	}
-	@PatchMapping("/{userId}/password")
-	public ResponseEntity<Void> updatePassword(@PathVariable Long userId,
-			@RequestBody PasswordUpdateRequest request) {
-		userService.updatePassword(userId, request);
+	/*
+	 * 로그인한 사용자의 프로필 수정
+	 * @param request 현재 HTTP 요청 (세션에서 userId 조회)
+	 * @param updateProfileRequest 변경할 닉네임, 소개, 이미지 정보
+	 * @return 성공 시 200 OK
+	 */
+	@PutMapping("/profile")
+	public ResponseEntity<Void> updateProfile(HttpServletRequest request,
+			@RequestBody UpdateProfileRequestDto updateProfileRequest) {
+		Long userId = (Long) request.getSession().getAttribute("userId");
+		userService.updateProfile(userId, updateProfileRequest);
 		return ResponseEntity.ok().build();
 	}
 
+	/*
+	 * 로그인한 사용자의 비밀번호 변경
+	 * @param request 현재 HTTP 요청 (세션에서 userId 조회)
+	 * @param passwordUpdateRequest 현재 비밀번호, 새 비밀번호
+	 * @return 성공 시 200 OK
+	 */
+	@PatchMapping("/password")
+	public ResponseEntity<Void> updatePassword(HttpServletRequest request,
+			@RequestBody PasswordUpdateRequestDto passwordUpdateRequest) {
+		Long userId = (Long) request.getSession().getAttribute("userId");
+		userService.updatePassword(userId, passwordUpdateRequest);
+		return ResponseEntity.ok().build();
+	}
 
-	@DeleteMapping("/{userId}")
-	public ResponseEntity<Void> deleteUser(@PathVariable Long userId,
-			@RequestBody UserDeleteRequest request) {
-		userService.deleteUser(userId, request);
+	/*
+	 * 로그인한 사용자 탈퇴 처리
+	 * @param request 현재 HTTP 요청 (세션에서 userId 조회)
+	 * @param userDeleteRequest 비밀번호 확인
+	 * @return 성공 시 204 No Content
+	 */
+	@DeleteMapping
+	public ResponseEntity<Void> deleteUser(HttpServletRequest request,
+			@RequestBody UserDeleteRequestDto userDeleteRequest) {
+		Long userId = (Long) request.getSession().getAttribute("userId");
+		userService.deleteUser(userId, userDeleteRequest);
 		return ResponseEntity.noContent().build();
 	}
 }

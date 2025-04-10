@@ -1,14 +1,19 @@
 package com.example.newsfeedproject.feed.controller;
 
+import com.example.newsfeedproject.auth.dto.LoginResponseDto;
 import com.example.newsfeedproject.feed.dto.request.FeedRequestDto;
 import com.example.newsfeedproject.feed.dto.response.FeedResponseDto;
 import com.example.newsfeedproject.feed.service.FeedService;
 import com.example.newsfeedproject.user.entity.User;
+import com.example.newsfeedproject.user.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.example.newsfeedproject.auth.SessionManager.LOGIN_USER;
 
 @RestController
 @RequestMapping("/newsfeed")
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class FeedController {
 
     private final FeedService feedService;
+    private final UserService userService;
 
     /**
      * 게시글 생성
@@ -23,7 +29,11 @@ public class FeedController {
      */
     @PostMapping
     public ResponseEntity<FeedResponseDto> createFeed(@SessionAttribute("loginUser") User loginUser,
+    public ResponseEntity<FeedResponseDto> createFeed(HttpSession session,
                                                       @RequestBody FeedRequestDto requestDto) {
+        LoginResponseDto user = (LoginResponseDto) session.getAttribute(LOGIN_USER);
+        long userId = user.getUserId();
+        User loginUser = userService.findById(userId);
         return ResponseEntity.status(201).body(feedService.createFeed(loginUser, requestDto));
     }
 
