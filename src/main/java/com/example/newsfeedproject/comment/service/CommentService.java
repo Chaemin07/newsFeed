@@ -3,9 +3,9 @@ package com.example.newsfeedproject.comment.service;
 
 import com.example.newsfeedproject.comment.dto.CommentResponseDto;
 import com.example.newsfeedproject.comment.entity.Comment;
-import com.example.newsfeedproject.comment.handler.MismatchException;
+import com.example.newsfeedproject.common.exception.MismatchException;
 import com.example.newsfeedproject.comment.repository.CommentRepository;
-import com.example.newsfeedproject.comment.repository.LikesRepository;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,22 +38,22 @@ public class CommentService {
   }
 
 //좋아요&답글 수 갱신기. 예시코드이므로 오류 가능성 있음. merge 전/후로 코드 수정 필요, 더미테스트 통과.
-  public void updateSubs(Long parentId,Long parentType){
-  try{
-    Long likes = likesRepository.countByParentIdAndParentType(parentId, parentType); //이부분이 작동 중지됩니다-테스트코드용
-    Comment findComment = commentRepository.findByParentIdAndParentType(parentId, parentType);
-    if (parentType == 0) {
-      Long answers = commentRepository.countByParentIdAndParentType(parentId, 1L);
-      findComment.UpdateSubs(likes, answers);
-      commentRepository.save(findComment);
-    } else if (parentType ==1) {
-      Long answers = 0L;
-      findComment.UpdateSubs(likes, answers);
-      commentRepository.save(findComment);
-    } else throw new MismatchException(HttpStatus.BAD_REQUEST,"잘못된 입력값입니다");
-
-  }catch(Exception e){log.error("Exception error: 갱신기 오류발생!!");}
-  }
+//  public void updateSubs(Long parentId,Long parentType){
+//  try{
+//    Long likes = likesRepository.countByParentIdAndParentType(parentId, parentType); //이부분이 작동 중지됩니다-테스트코드용
+//    Comment findComment = commentRepository.findByParentIdAndParentType(parentId, parentType);
+//    if (parentType == 0) {
+//      Long answers = commentRepository.countByParentIdAndParentType(parentId, 1L);
+//      findComment.UpdateSubs(likes, answers);
+//      commentRepository.save(findComment);
+//    } else if (parentType ==1) {
+//      Long answers = 0L;
+//      findComment.UpdateSubs(likes, answers);
+//      commentRepository.save(findComment);
+//    } else throw new MismatchException(HttpStatus.BAD_REQUEST,"잘못된 입력값입니다");
+//
+//  }catch(Exception e){log.error("Exception error: 갱신기 오류발생!!");}
+//  }
 
 
 

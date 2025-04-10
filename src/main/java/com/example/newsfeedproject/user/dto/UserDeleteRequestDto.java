@@ -6,7 +6,7 @@ package com.example.newsfeedproject.user.dto;
 import lombok.Getter;
 
 @Getter
-public class UserDeleteRequest {
+public class UserDeleteRequestDto {
 
 	private String password;
 }

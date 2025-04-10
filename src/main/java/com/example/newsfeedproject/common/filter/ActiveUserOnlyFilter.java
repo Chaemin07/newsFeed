@@ -46,6 +46,9 @@ public class ActiveUserOnlyFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         LoginResponseDto loggedInUser = SessionManager.getLoggedInUser(httpRequest);
 
+        String requestURI = httpRequest.getRequestURI();
+        log.info("유효 로그인 필터 로직 실행 - 요청 URI: {}", requestURI);
+
         try {
             LoginResponseDto user = SessionManager.getLoggedInUser(httpRequest);
             // 로그인되어 세션은 있는 상태
@@ -59,6 +62,7 @@ public class ActiveUserOnlyFilter implements Filter {
         } catch (RuntimeException e) {
             // 로그인 안 된 사용자거나 세션 문제 → SessionManager에서 에러 로그와 예외 throw
         }
+        log.info("유효 로그인 필터 로직 끝 - 요청 URI: {}", requestURI);
 
         chain.doFilter(request, response);
     }

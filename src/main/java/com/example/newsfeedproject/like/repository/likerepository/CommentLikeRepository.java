@@ -12,7 +12,7 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
 
     CommentLike findByUserAndComment(User user, Comment comment);
 
-    long countByComment_Id(long id);
+    long countByComment_ParentId(long id);
 
 
 }

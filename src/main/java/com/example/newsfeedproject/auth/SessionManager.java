@@ -112,7 +112,7 @@ public class SessionManager {
                 (LoginResponseDto) session.getAttribute(LOGIN_USER) : null;
 
         if (loggedUser == null) {
-            log.warn("비로그인 사용자 접근 차단 - 요청 URI: {}", requestURI);
+            log.warn("비로그인 사용자 접근 - 요청 URI: {}", requestURI);
             throw new RuntimeException("로그인 해주세요.");
         }
         return loggedUser;
