@@ -47,13 +47,13 @@ public class FeedController {
     }
 
     /**
-     * 내가 쓴 게시글 전체 조회(프로필 눌렀을때 생각하면 됨)
+     * 내가 쓴 피드 전체 조회(프로필 눌렀을때 생각하면 됨)
      *
      * @param session
      * @param pageable
      * @return
      */
-    @GetMapping("/my")
+    @GetMapping("/myprofile")
     public ResponseEntity<Page<FeedResponseDto>> getMyFeeds(
             HttpSession session,
             Pageable pageable
@@ -63,13 +63,13 @@ public class FeedController {
     }
 
     /**
-     * 내가 쓴 게시글 + 팔로잉한 사람 게시글 조회
+     * 내가 쓴 피드 + 팔로잉한 사람 피드 조회(인스타 홈 느낌)
      *
      * @param session
      * @param pageable
      * @return
      */
-    @GetMapping("/following")
+    @GetMapping("/home")
     public ResponseEntity<Page<FeedResponseDto>> getFollowingFeeds(
             HttpSession session,
             Pageable pageable
@@ -79,14 +79,13 @@ public class FeedController {
     }
 
     /**
-     * 단일 게시글 조회
+     * 단일 피드 조회
      *
-     * 게시글 ID를 기준으로 특정 게시글을 조회
+     * 피드 ID를 기준으로 특정 피드 조회
      *
-     * @param id 조회할 게시글의 고유 ID
-     * @return 조회된 게시글 정보 DTO
+     * @param id 조회할 피드 고유 ID
+     * @return 조회된 피드 정보 DTO
      */
-
     @GetMapping("/{id}")
     public ResponseEntity<FeedResponseDto> getFeed(@PathVariable Long id) {
         return ResponseEntity.ok(feedService.getFeed(id));
@@ -94,13 +93,13 @@ public class FeedController {
 
 
     /**
-     * 게시글 수정 (작성자만)
-     * 그인한 사용자가 작성한 게시글만 수정
+     * 피드 수정 (작성자만)
+     * 로그인유저가 작성한 피드 수정
      *
-     * @param id 수정할 게시글의 고유 ID
-     * @param session 현재 로그인된 사용자 세션
+     * @param id 수정할 피드 고유 ID
+     * @param session 현재 로그인된 유저 세션
      * @param requestDto 수정할 내용이 담긴 요청
-     * @return 수정된 게시글 정보 DTO
+     * @return 수정된 피드 정보 DTO
      */
     @PutMapping("/{id}")
     public ResponseEntity<FeedResponseDto> updateFeed(@PathVariable Long id,
@@ -112,10 +111,10 @@ public class FeedController {
 
 
     /**
-     * 게시글 삭제 (작성자만)
-     * 로그인한 사용자가 작성한 게시글만 삭제
+     * 피드 삭제 (작성자만)
+     * 로그인한 사용자가 작성한 피드만 삭제
      *
-     * @param id 삭제할 게시글의 고유 ID
+     * @param id 삭제할 피드 고유 ID
      * @param session 현재 로그인된 사용자 정보를 담고 있는 세션
      * @return 본문 없이 200 OK 응답
      */
