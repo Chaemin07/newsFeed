@@ -69,7 +69,7 @@ public class UserController {
 	public ResponseEntity<Void> updatePassword(HttpServletRequest request,
 			@RequestBody PasswordUpdateRequest passwordUpdateRequest) {
 		Long userId = (Long) request.getSession().getAttribute("userId");
-		userService.updatePassword(userId, passwordUpdateRequest);
+		userService.updatePassword(userId, passwordUpdateRequest);ㅎ
 		return ResponseEntity.ok().build();
 	}
 
