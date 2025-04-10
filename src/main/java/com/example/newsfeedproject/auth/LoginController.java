@@ -1,12 +1,11 @@
 package com.example.newsfeedproject.auth;
 
 
-import com.example.newsfeedproject.auth.Dto.LoginRequestDto;
-import com.example.newsfeedproject.auth.Dto.LoginResponseDto;
+import com.example.newsfeedproject.auth.dto.LoginRequestDto;
+import com.example.newsfeedproject.auth.dto.LoginResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import org.hibernate.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +33,7 @@ public class LoginController {
      * <p>요청으로 들어온 아이디와 비밀번호를 검증하고,
      * 세션이 없다면 생성 후 사용자 정보를 저장합니다.</p>
      *
-     * @param requestDto 로그인 요청 정보 (아이디, 비밀번호)
+     * @param requestDto 로그인 요청 정보 (아이디(email), 비밀번호)
      * @param request    현재 HTTP 요청 객체
      * @return 로그인 성공 시 사용자 정보, 실패 시 상태 메시지 반환
      */
@@ -43,8 +42,6 @@ public class LoginController {
             @RequestBody LoginRequestDto requestDto,
             HttpServletRequest request
     ) {
-        String userId = requestDto.getUserId();
-        String userPw = requestDto.getUserPw();
         HttpSession session = request.getSession(false);
 
         if (SessionManager.isLogin(session)) {

@@ -1,0 +1,24 @@
+create table likes (
+        created_at datetime,
+        modified_at datetime,
+        id bigint auto_increment,
+        parent_type bigint,
+        user_id bigint,
+        parent_id bigint,
+        primary key (rid)
+    )
+
+INSERT INTO likes
+    (parent_id, parent_type, user_id)
+VALUES
+    ('1',0,1);
+
+INSERT INTO likes
+(parent_id, parent_type, user_id)
+VALUES
+    ('1',0,2);
+
+INSERT INTO likes
+(parent_id, parent_type, user_id)
+VALUES
+    ('1',1,3);
