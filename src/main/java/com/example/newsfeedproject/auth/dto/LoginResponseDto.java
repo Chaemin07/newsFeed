@@ -1,6 +1,7 @@
-package com.example.newsfeedproject.auth.Dto;
+package com.example.newsfeedproject.auth.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 /**
@@ -12,6 +13,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
+@Builder
 public class LoginResponseDto {
     /**
      * 사용자의 고유 ID
@@ -27,5 +29,7 @@ public class LoginResponseDto {
     private String userEmail;
 
     private boolean isActive;
+
+
 
 }

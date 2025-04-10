@@ -1,4 +1,4 @@
-package com.example.newsfeedproject.common.Filter;
+package com.example.newsfeedproject.common.filter;
 
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;

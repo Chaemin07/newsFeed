@@ -1,8 +1,8 @@
-package com.example.newsfeedproject.Feed.controller;
+package com.example.newsfeedproject.feed.controller;
 
-import com.example.newsfeedproject.newsfeed.dto.Request.FeedRequestDto;
-import com.example.newsfeedproject.newsfeed.dto.Response.FeedResponseDto;
-import com.example.newsfeedproject.newsfeed.service.FeedService;
+import com.example.newsfeedproject.feed.dto.request.FeedRequestDto;
+import com.example.newsfeedproject.feed.dto.response.FeedResponseDto;
+import com.example.newsfeedproject.feed.service.FeedService;
 import com.example.newsfeedproject.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

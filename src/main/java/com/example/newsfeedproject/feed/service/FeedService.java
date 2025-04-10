@@ -1,13 +1,10 @@
-package com.example.newsfeedproject.Feed.service;
+package com.example.newsfeedproject.feed.service;
 
-import com.example.newsfeedproject.Feed.dto.Request.FeedRequestDto;
-import com.example.newsfeedproject.Feed.dto.Response.FeedResponseDto;
-import com.example.newsfeedproject.Feed.entity.NewsFeed;
-import com.example.newsfeedproject.Feed.repository.NewsFeedRepository;
-import com.example.newsfeedproject.newsfeed.dto.Request.FeedRequestDto;
-import com.example.newsfeedproject.newsfeed.dto.Response.FeedResponseDto;
-import com.example.newsfeedproject.newsfeed.entity.NewsFeed;
-import com.example.newsfeedproject.newsfeed.repository.NewsFeedRepository;
+import com.example.newsfeedproject.feed.dto.request.FeedRequestDto;
+import com.example.newsfeedproject.feed.dto.response.FeedResponseDto;
+import com.example.newsfeedproject.feed.entity.NewsFeed;
+import com.example.newsfeedproject.feed.repository.NewsFeedRepository;
+
 import com.example.newsfeedproject.user.entity.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
