@@ -1,4 +1,4 @@
-package com.example.newsfeedproject.Feed.dto.Response;
+package com.example.newsfeedproject.feed.dto.response;
 
 /**
  * 게시글 응답시 클라이언트에게 전달할 데이터

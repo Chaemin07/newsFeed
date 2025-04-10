@@ -1,4 +1,4 @@
-package com.example.newsfeedproject.Feed.entity;
+package com.example.newsfeedproject.feed.entity;
 
 import com.example.newsfeedproject.user.entity.User;
 import jakarta.persistence.*;
@@ -42,15 +42,15 @@ public class NewsFeed {
     private LocalDateTime updatedAt;
 
     public NewsFeed(User createUser, String contents) {
-        this.creator = creator;
-        this.content = content;
+        this.creator = createUser;
+        this.content = contents;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
     // 게시글 내용 수정
     public void updateContents(String contents) {
-        this.content = content;
+        this.content = contents;
         this.updatedAt = LocalDateTime.now();
     }
 }

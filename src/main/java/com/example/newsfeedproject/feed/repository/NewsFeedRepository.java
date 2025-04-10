@@ -1,6 +1,6 @@
-package com.example.newsfeedproject.Feed.repository;
+package com.example.newsfeedproject.feed.repository;
 
-import com.example.newsfeedproject.Feed.entity.NewsFeed;
+import com.example.newsfeedproject.feed.entity.NewsFeed;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

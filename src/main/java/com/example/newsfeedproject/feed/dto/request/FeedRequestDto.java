@@ -1,4 +1,4 @@
-package com.example.newsfeedproject.Feed.dto.Request;
+package com.example.newsfeedproject.feed.dto.request;
 /**
  * 게시글 생성/수정 시 클라이언트로 전달받을 데이터
  */

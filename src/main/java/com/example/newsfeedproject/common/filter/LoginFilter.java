@@ -1,10 +1,9 @@
-package com.example.newsfeedproject.common.Filter;
+package com.example.newsfeedproject.common.filter;
 
-import com.example.newsfeedproject.auth.Dto.LoginResponseDto;
+import com.example.newsfeedproject.auth.dto.LoginResponseDto;
 import com.example.newsfeedproject.auth.SessionManager;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.PatternMatchUtils;
 
