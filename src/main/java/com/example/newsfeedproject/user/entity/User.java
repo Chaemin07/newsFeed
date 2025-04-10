@@ -1,4 +1,7 @@
-/* 사용자 정보를 정의하는 엔티티 클래스. DB 테이블과 매핑되며, 사용자 이메일, 비밀번호, 닉네임 등을 포함
+/*
+ * 사용자 정보를 정의하는 엔티티 클래스.
+ * 이 클래스는 DB의 사용자 테이블과 매핑되며,
+ * 이메일, 비밀번호, 이름, 자기소개, 프로필 이미지, 탈퇴 여부 등의 필드를 포함
  */
 
 package com.example.newsfeedproject.user.entity;
@@ -45,6 +48,7 @@ public class User {
 	public void markAsDeleted() {
 		this.isDeleted = true;
 	}
+
 	// 비밀번호 변경
 	public void updatePassword(String newPassword) {
 		this.password = newPassword;
