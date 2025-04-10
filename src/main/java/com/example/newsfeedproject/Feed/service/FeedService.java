@@ -1,4 +1,4 @@
-package com.example.newsfeedproject.Feed.service;
+package com.example.newsfeedproject.feed.service;
 
 import com.example.newsfeedproject.Feed.dto.Request.FeedRequestDto;
 import com.example.newsfeedproject.Feed.dto.Response.FeedResponseDto;
