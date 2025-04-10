@@ -1,4 +1,4 @@
-package com.example.newsfeedproject.comment;
+package com.example.newsfeedproject;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
