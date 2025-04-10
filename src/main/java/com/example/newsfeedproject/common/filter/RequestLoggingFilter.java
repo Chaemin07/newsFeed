@@ -43,13 +43,15 @@ public class RequestLoggingFilter implements Filter {
                          FilterChain chain
     ) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String requestURI = ((HttpServletRequest) request).getRequestURI();
+        log.info("요청 필터 로직 실행 - 요청 URI: {}", requestURI);
 
         try {
             LoginResponseDto user = SessionManager.getLoggedInUser(httpRequest);
             Long userId = user.getUserId();
 
             String method = httpRequest.getMethod();
-            String requestURI = httpRequest.getRequestURI();
+            requestURI = httpRequest.getRequestURI();
             // timestamp는 혹시 모르는 db 저장용, 사용은 안함
             String timestamp = LocalDateTime.now().format(formatter);
 
@@ -57,13 +59,13 @@ public class RequestLoggingFilter implements Filter {
 
         } catch (RuntimeException e) {
             String method = httpRequest.getMethod();
-            String requestURI = httpRequest.getRequestURI();
+            requestURI = httpRequest.getRequestURI();
 
             // 로그인 정보가 없는 경우
             log.info("??? REQUEST, method=[{}], uri=[{}]", method, requestURI);
 
         }
-
+        log.info("요청 필터 로직 끝 - 요청 URI: {}", requestURI);
         chain.doFilter(request, response);
 
     }

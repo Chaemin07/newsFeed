@@ -32,7 +32,7 @@ public class User {
 
 	//탈퇴 여부
 	@Builder.Default
-	private boolean deleted = false;
+	private boolean isDeleted = false;
 
 	//사용자 프로필 수정 닉네임, 자기소개, 이미지
 	public void updateProfile(String nickname, String bio, String profileImageUrl) {
@@ -43,7 +43,7 @@ public class User {
 
 	// 사용자 탈퇴처리
 	public void markAsDeleted() {
-		this.deleted = true;
+		this.isDeleted = true;
 	}
 	// 비밀번호 변경
 	public void updatePassword(String newPassword) {

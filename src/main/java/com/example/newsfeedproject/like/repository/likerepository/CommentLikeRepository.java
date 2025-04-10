@@ -1,5 +1,6 @@
 package com.example.newsfeedproject.like.repository.likerepository;
 
+import com.example.newsfeedproject.comment.entity.Comment;
 import com.example.newsfeedproject.like.entity.likeentity.CommentLike;
 import com.example.newsfeedproject.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +12,7 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
 
     CommentLike findByUserAndComment(User user, Comment comment);
 
-    long countByComment_Id(long id);
+    long countByComment_ParentId(long id);
 
 
 }
