@@ -1,5 +1,7 @@
 package com.example.newsfeedproject.feed.service;
 
+import com.example.newsfeedproject.common.exception.CustomException;
+import com.example.newsfeedproject.common.exception.ErrorCode;
 import com.example.newsfeedproject.feed.dto.request.FeedRequestDto;
 import com.example.newsfeedproject.feed.dto.response.FeedResponseDto;
 import com.example.newsfeedproject.feed.entity.NewsFeed;
@@ -50,6 +52,7 @@ public class FeedService {
 
     /**
      * 단일 게시글 조회
+     * 단일 게시글 조회 때 좋아요와 댓글 수가 추가될거임 -> 아직 안함
      */
     @Transactional(readOnly = true)
     public FeedResponseDto getFeed(Long id) {
@@ -70,7 +73,8 @@ public class FeedService {
 
         // 2. 작성자가 본인이 아닐때
         if (!feed.getCreator().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+//            throw new IllegalArgumentException("작성자만 수정할 수 있습니다."); -> 에러코드에서 함께 관리
+            throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
         }
 
         feed.updateContents(requestDto.getContent());
@@ -86,9 +90,9 @@ public class FeedService {
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
         if (!feed.getCreator().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
+//            throw new IllegalArgumentException("작성자만 삭제할 수 있습니다."); -> 에러코드에서 함께 관리
+            throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
         }
-
         feedRepository.delete(feed);
     }
 

@@ -19,20 +19,17 @@ public class FeedController {
 
     /**
      * 게시글 생성
+     * @SessionAttribute("loginUser") 세션에 저장된 로그인 정보 가져오기
      */
     @PostMapping
-    public ResponseEntity<FeedResponseDto> createFeed(@RequestAttribute User loginUser,
+    public ResponseEntity<FeedResponseDto> createFeed(@SessionAttribute("loginUser") User loginUser,
                                                       @RequestBody FeedRequestDto requestDto) {
         return ResponseEntity.status(201).body(feedService.createFeed(loginUser, requestDto));
     }
-    /**
-     * @RequestAttribute의 역할 : 미리 로그인한 User객체 -> request.setAttribute("loginUser", user);에 저장
-     * @RequestAttribute User loginUser -> 본인 확인, 현재 로그인한 사용자 정보 가져오기
-     */
-
 
     /**
      * 게시글 전체 조회 (페이징 + 정렬)
+     *
      */
     @GetMapping
     public ResponseEntity<Page<FeedResponseDto>> getAllFeeds(Pageable pageable) {
@@ -50,10 +47,11 @@ public class FeedController {
 
     /**
      * 게시글 수정 (작성자 본인만 가능)
+     * @SessionAttribute로 로그인 정보 확인 -> controller에서 예외처리로 게시글 작성자만 가능하도록(삭제도 동일)
      */
     @PutMapping("/{id}")
     public ResponseEntity<FeedResponseDto> updateFeed(@PathVariable Long id,
-                                                      @RequestAttribute User loginUser,
+                                                      @SessionAttribute("loginUser") User loginUser,
                                                       @RequestBody FeedRequestDto requestDto) {
         return ResponseEntity.ok(feedService.updateFeed(id, loginUser, requestDto));
     }
@@ -63,7 +61,7 @@ public class FeedController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFeed(@PathVariable Long id,
-                                           @RequestAttribute User loginUser) {
+                                           @SessionAttribute("loginUser") User loginUser) {
         feedService.deleteFeed(id, loginUser);
         return ResponseEntity.ok().build();
         // 200 OK 상태 코드로만 응답, 본문은 없게
