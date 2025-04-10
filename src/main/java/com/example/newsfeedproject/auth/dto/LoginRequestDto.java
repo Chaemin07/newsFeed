@@ -1,5 +1,6 @@
 package com.example.newsfeedproject.auth.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

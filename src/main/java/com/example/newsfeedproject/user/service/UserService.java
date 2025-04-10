@@ -24,6 +24,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
+	@Transactional
 	public void signup(UserSignupRequestDto request) {
 		if (!ValidationUtils.isValidEmail(request.getEmail())) {
 			throw new CustomException(ErrorCode.INVALID_EMAIL_FORMAT);
@@ -106,7 +107,6 @@ public class UserService {
 
 
 	public LoginResponseDto authenticate(LoginRequestDto requestDto) {
-
 		// 해당 email의 user없으면 throw
 		User user = userRepository.findByEmail(requestDto.getUserEmail())
 				.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -126,5 +126,9 @@ public class UserService {
 				.isActive(!user.isDeleted())// 계정 활성 여부
 				.build();
 		return responseDto;
+	}
+
+	public User findById(Long id) {
+		return userRepository.findById(id).orElseThrow(() -> new RuntimeException("회원이 없습니다!"));
 	}
 }

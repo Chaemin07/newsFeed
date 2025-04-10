@@ -9,9 +9,13 @@ import java.util.regex.Pattern;
 public class ValidationUtils {
 
 	private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w-.]+@[\\w-]+\\.[a-z]{2,}$");
+//	private static final Pattern PASSWORD_PATTERN =
+//			Pattern.compile(
+//					"^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=[\\]{};':\"\\\\|,.<>/?]).{8,}$");
 	private static final Pattern PASSWORD_PATTERN =
 			Pattern.compile(
-					"^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=[\\]{};':\"\\\\|,.<>/?]).{8,}$");
+					"^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-\\\\\\[\\]{};':\"\\\\|,.<>/?]).{8,}$"
+			);
 
 	public static boolean isValidEmail(String email) {
 		return EMAIL_PATTERN.matcher(email).matches();
