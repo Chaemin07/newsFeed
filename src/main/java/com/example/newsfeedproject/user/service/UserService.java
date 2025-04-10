@@ -127,4 +127,8 @@ public class UserService {
 				.build();
 		return responseDto;
 	}
+
+	public User findById(Long id) {
+		return userRepository.findById(id).orElseThrow(() -> new RuntimeException("회원이 없습니다!"));
+	}
 }
