@@ -27,7 +27,7 @@ public class User {
 	private String password;
 
 	@Column(nullable = false, unique = true)
-	private String name;
+	private String nickname;
 
 	//자기소개
 	private String bio;
@@ -38,8 +38,8 @@ public class User {
 	private boolean deleted = false;
 
 	//사용자 프로필 수정 닉네임, 자기소개, 이미지
-	public void updateProfile(String name, String bio, String profileImageUrl) {
-		this.name = name;
+	public void updateProfile(String nickname, String bio, String profileImageUrl) {
+		this.nickname = nickname;
 		this.bio = bio;
 		this.profileImageUrl = profileImageUrl;
 	}

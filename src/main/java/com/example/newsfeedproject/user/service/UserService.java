@@ -36,7 +36,7 @@ public class UserService {
 		User user = User.builder()
 				.email(request.getEmail())
 				.password(passwordEncoder.encode(request.getPassword()))
-				.name(request.getName())
+				.nickname(request.getNickname())
 				.bio(request.getBio())
 				.profileImageUrl(request.getProfileImageUrl())
 				.build();
@@ -50,7 +50,7 @@ public class UserService {
 		return new UserProfileResponse(
 				user.getId(),
 				user.getEmail(),
-				user.getName(),
+				user.getNickname(),
 				user.getBio(),
 				user.getProfileImageUrl()
 		);
@@ -59,7 +59,7 @@ public class UserService {
 	@Transactional
 	public void updateProfile(Long userId, UpdateProfileRequest request) {
 		User user = getActiveUserById(userId);
-		user.updateProfile(request.getName(), request.getBio(), request.getProfileImageUrl());
+		user.updateProfile(request.getNickname(), request.getBio(), request.getProfileImageUrl());
 	}
 
 	@Transactional
