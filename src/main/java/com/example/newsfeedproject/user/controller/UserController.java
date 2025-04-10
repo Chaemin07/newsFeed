@@ -5,6 +5,8 @@
 package com.example.newsfeedproject.user.controller;
 
 
+import com.example.newsfeedproject.auth.SessionManager;
+import com.example.newsfeedproject.auth.dto.LoginResponseDto;
 import com.example.newsfeedproject.user.dto.PasswordUpdateRequestDto;
 import com.example.newsfeedproject.user.dto.UpdateProfileRequestDto;
 import com.example.newsfeedproject.user.dto.UserDeleteRequestDto;
@@ -53,7 +55,8 @@ public class UserController {
 	@PutMapping("/profile")
 	public ResponseEntity<Void> updateProfile(HttpServletRequest request,
 			@RequestBody UpdateProfileRequestDto updateProfileRequest) {
-		Long userId = (Long) request.getSession().getAttribute("userId");
+		LoginResponseDto user = SessionManager.getLoginUser(request.getSession());
+		Long userId = user.getUserId();
 		userService.updateProfile(userId, updateProfileRequest);
 		return ResponseEntity.ok().build();
 	}
@@ -67,7 +70,8 @@ public class UserController {
 	@PatchMapping("/password")
 	public ResponseEntity<Void> updatePassword(HttpServletRequest request,
 			@RequestBody PasswordUpdateRequestDto passwordUpdateRequest) {
-		Long userId = (Long) request.getSession().getAttribute("userId");
+		LoginResponseDto user = SessionManager.getLoginUser(request.getSession());
+		Long userId = user.getUserId();
 		userService.updatePassword(userId, passwordUpdateRequest);
 		return ResponseEntity.ok().build();
 	}
@@ -81,7 +85,8 @@ public class UserController {
 	@DeleteMapping
 	public ResponseEntity<Void> deleteUser(HttpServletRequest request,
 			@RequestBody UserDeleteRequestDto userDeleteRequest) {
-		Long userId = (Long) request.getSession().getAttribute("userId");
+		LoginResponseDto user = SessionManager.getLoginUser(request.getSession());
+		Long userId = user.getUserId();
 		userService.deleteUser(userId, userDeleteRequest);
 		return ResponseEntity.noContent().build();
 	}
