@@ -32,7 +32,8 @@ public class LoginFilter implements Filter {
      * 로그인 없이 접근 가능한 URI 목록 (화이트리스트)
      * 이 경로들은 인증 검사에서 제외됩니다.
      */
-    private static final String[] WHITE_LIST = {"/users", "/auth/login"};
+    private static final String[] WHITE_LIST = {"/api/users/signup", "/auth/login"};
+//    private static final String[] WHITE_LIST = {"/**"};
 
     /**
      * 로그인 여부를 확인하는 필터 로직.
@@ -52,12 +53,19 @@ public class LoginFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String requestURI = httpRequest.getRequestURI();
 
-        log.info("로그인 필터 로직 실행 - 요청 URI: {}", requestURI);
+        try {
+            log.info("로그인 필터 로직 실행 - 요청 URI: {}", requestURI);
+            if (!isWhiteList(requestURI)) {
+                LoginResponseDto loggedInUser = SessionManager.getLoggedInUser((HttpServletRequest) request);
+                log.info("로그인된 사용자 ID {}, 요청URI: {}", loggedInUser.getUserId(), requestURI);
+            }
 
-        if (!isWhiteList(requestURI)) {
-            LoginResponseDto loggedInUser = SessionManager.getLoggedInUser((HttpServletRequest) request);
-            log.info("로그인된 사용자 ID {}, 요청URI: {}", loggedInUser.getUserId(), requestURI);
+        } catch (RuntimeException e) {
+            log.info("로그인되지 않은 사용자입니다!");
         }
+
+        log.info("로그인 필터 로직 끝 - 요청 URI: {}", requestURI);
+        
         // 로그인된 사용자 또는 화이트리스트 경로일 경우 다음 필터로 요청 전달
         chain.doFilter(request, response);
     }

@@ -5,12 +5,13 @@ package com.example.newsfeedproject.user.repository;
 
 import com.example.newsfeedproject.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	boolean existsByEmailAndDeletedFalse(String email);
+	boolean existsByEmailAndIsDeletedFalse(String email);
 	// 로그인 시 필요
 	Optional<User> findByEmail(String email);
 }

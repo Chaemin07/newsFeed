@@ -6,7 +6,7 @@ package com.example.newsfeedproject.user.dto;
 import lombok.Getter;
 
 @Getter
-public class UserSignupRequest {
+public class UserSignupRequestDto {
 
 	private String email;
 	private String password;

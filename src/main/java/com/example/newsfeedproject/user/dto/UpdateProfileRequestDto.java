@@ -6,7 +6,7 @@ package com.example.newsfeedproject.user.dto;
 import lombok.Getter;
 
 @Getter
-public class UpdateProfileRequest {
+public class UpdateProfileRequestDto {
 
 	private String nickname;
 	private String bio;

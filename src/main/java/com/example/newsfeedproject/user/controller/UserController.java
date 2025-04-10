@@ -5,15 +5,15 @@
 
 package com.example.newsfeedproject.user.controller;
 
-import com.example.newsfeedproject.user.dto.UserSignupRequest;
-import com.example.newsfeedproject.user.dto.UpdateProfileRequest;
-import com.example.newsfeedproject.user.dto.UserProfileResponse;
+import com.example.newsfeedproject.user.dto.UserSignupRequestDto;
+import com.example.newsfeedproject.user.dto.UpdateProfileRequestDto;
+import com.example.newsfeedproject.user.dto.UserProfileResponseDto;
 import com.example.newsfeedproject.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.newsfeedproject.user.dto.UserDeleteRequest;
-import com.example.newsfeedproject.user.dto.PasswordUpdateRequest;
+import com.example.newsfeedproject.user.dto.UserDeleteRequestDto;
+import com.example.newsfeedproject.user.dto.PasswordUpdateRequestDto;
 
 
 @RestController
@@ -24,27 +24,27 @@ public class UserController {
 	private final UserService userService;
 
 	@PostMapping("/signup")
-	public ResponseEntity<Void> join(@RequestBody UserSignupRequest request) {
+	public ResponseEntity<Void> join(@RequestBody UserSignupRequestDto request) {
 		userService.signup(request);
 		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/{userId}")
-	public ResponseEntity<UserProfileResponse> getProfile(@PathVariable Long userId) {
-		UserProfileResponse response = userService.getProfile(userId);
+	public ResponseEntity<UserProfileResponseDto> getProfile(@PathVariable Long userId) {
+		UserProfileResponseDto response = userService.getProfile(userId);
 		return ResponseEntity.ok(response);
 	}
 
 	@PutMapping("/{userId}")
 	public ResponseEntity<Void> updateProfile(
 			@PathVariable Long userId,
-			@RequestBody UpdateProfileRequest request) {
+			@RequestBody UpdateProfileRequestDto request) {
 		userService.updateProfile(userId, request);
 		return ResponseEntity.ok().build();
 	}
 	@PatchMapping("/{userId}/password")
 	public ResponseEntity<Void> updatePassword(@PathVariable Long userId,
-			@RequestBody PasswordUpdateRequest request) {
+			@RequestBody PasswordUpdateRequestDto request) {
 		userService.updatePassword(userId, request);
 		return ResponseEntity.ok().build();
 	}
@@ -52,7 +52,7 @@ public class UserController {
 
 	@DeleteMapping("/{userId}")
 	public ResponseEntity<Void> deleteUser(@PathVariable Long userId,
-			@RequestBody UserDeleteRequest request) {
+			@RequestBody UserDeleteRequestDto request) {
 		userService.deleteUser(userId, request);
 		return ResponseEntity.noContent().build();
 	}

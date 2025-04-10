@@ -24,14 +24,14 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public void signup(UserSignupRequest request) {
+	public void signup(UserSignupRequestDto request) {
 		if (!ValidationUtils.isValidEmail(request.getEmail())) {
 			throw new CustomException(ErrorCode.INVALID_EMAIL_FORMAT);
 		}
 		if (!ValidationUtils.isValidPassword(request.getPassword())) {
 			throw new CustomException(ErrorCode.INVALID_PASSWORD_FORMAT);
 		}
-		if (userRepository.existsByEmailAndDeletedFalse(request.getEmail())) {
+		if (userRepository.existsByEmailAndIsDeletedFalse(request.getEmail())) {
 			throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
 		}
 
@@ -46,10 +46,10 @@ public class UserService {
 		userRepository.save(user);
 	}
 
-	public UserProfileResponse getProfile(Long userId) {
+	public UserProfileResponseDto getProfile(Long userId) {
 		User user = getActiveUserById(userId);
 
-		return new UserProfileResponse(
+		return new UserProfileResponseDto(
 				user.getId(),
 				user.getEmail(),
 				user.getNickname(),
@@ -59,13 +59,13 @@ public class UserService {
 	}
 
 	@Transactional
-	public void updateProfile(Long userId, UpdateProfileRequest request) {
+	public void updateProfile(Long userId, UpdateProfileRequestDto request) {
 		User user = getActiveUserById(userId);
 		user.updateProfile(request.getNickname(), request.getBio(), request.getProfileImageUrl());
 	}
 
 	@Transactional
-	public void deleteUser(Long userId, UserDeleteRequest request) {
+	public void deleteUser(Long userId, UserDeleteRequestDto request) {
 		User user = getActiveUserById(userId);
 
 		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -76,7 +76,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public void updatePassword(Long userId, PasswordUpdateRequest request) {
+	public void updatePassword(Long userId, PasswordUpdateRequestDto request) {
 		User user = getActiveUserById(userId);
 
 		if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
