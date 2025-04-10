@@ -22,7 +22,11 @@ import com.example.newsfeedproject.user.dto.PasswordUpdateRequestDto;
 public class UserController {
 
 	private final UserService userService;
-
+	/*
+	 * 회원가입 요청을 처리
+	 * @param signupRequest 사용자 정보 (이메일, 비밀번호, 이름 등)
+	 * @return 성공 시 200 OK
+	 */
 	@PostMapping("/signup")
 	public ResponseEntity<Void> join(@RequestBody UserSignupRequestDto request) {
 		userService.signup(request);
