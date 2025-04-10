@@ -21,6 +21,11 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
 	private final UserService userService;
+	/*
+	 * 회원가입 요청을 처리
+	 * @param signupRequest 사용자 정보 (이메일, 비밀번호, 이름 등)
+	 * @return 성공 시 200 OK
+	 */
 
 
 	@PostMapping("/signup")
@@ -29,28 +34,54 @@ public class UserController {
 		return ResponseEntity.ok().build();
 	}
 
+	/*
+	 * 사용자 프로필 조회 (다른 사람의 프로필도 가능)
+	 * @param targetUserId 조회할 사용자 ID
+	 * @return 조회된 사용자 프로필 정보
+	 */
 	@GetMapping("/{targetUserId}")
 	public ResponseEntity<UserProfileResponse> getProfile(@PathVariable Long targetUserId) {
 		UserProfileResponse response = userService.getProfile(targetUserId);
 		return ResponseEntity.ok(response);
 	}
 
+	/*
+	 * 로그인한 사용자의 프로필 수정
+	 * @param request 현재 HTTP 요청 (세션에서 userId 조회)
+	 * @param updateProfileRequest 변경할 닉네임, 소개, 이미지 정보
+	 * @return 성공 시 200 OK
+	 */
 	@PutMapping("/profile")
-	public ResponseEntity<Void> updateProfile(HttpServletRequest request, @RequestBody UpdateProfileRequest updateProfileRequest) {
+	public ResponseEntity<Void> updateProfile(HttpServletRequest request,
+			@RequestBody UpdateProfileRequest updateProfileRequest) {
 		Long userId = (Long) request.getSession().getAttribute("userId");
 		userService.updateProfile(userId, updateProfileRequest);
 		return ResponseEntity.ok().build();
 	}
 
+	/*
+	 * 로그인한 사용자의 비밀번호 변경
+	 * @param request 현재 HTTP 요청 (세션에서 userId 조회)
+	 * @param passwordUpdateRequest 현재 비밀번호, 새 비밀번호
+	 * @return 성공 시 200 OK
+	 */
 	@PatchMapping("/password")
-	public ResponseEntity<Void> updatePassword(HttpServletRequest request, @RequestBody PasswordUpdateRequest passwordUpdateRequest) {
+	public ResponseEntity<Void> updatePassword(HttpServletRequest request,
+			@RequestBody PasswordUpdateRequest passwordUpdateRequest) {
 		Long userId = (Long) request.getSession().getAttribute("userId");
 		userService.updatePassword(userId, passwordUpdateRequest);
 		return ResponseEntity.ok().build();
 	}
 
+	/*
+	 * 로그인한 사용자 탈퇴 처리
+	 * @param request 현재 HTTP 요청 (세션에서 userId 조회)
+	 * @param userDeleteRequest 비밀번호 확인
+	 * @return 성공 시 204 No Content
+	 */
 	@DeleteMapping
-	public ResponseEntity<Void> deleteUser(HttpServletRequest request, @RequestBody UserDeleteRequest userDeleteRequest) {
+	public ResponseEntity<Void> deleteUser(HttpServletRequest request,
+			@RequestBody UserDeleteRequest userDeleteRequest) {
 		Long userId = (Long) request.getSession().getAttribute("userId");
 		userService.deleteUser(userId, userDeleteRequest);
 		return ResponseEntity.noContent().build();
