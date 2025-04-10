@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 
 /**
@@ -27,6 +28,9 @@ import java.time.format.DateTimeFormatter;
 public class RequestLoggingFilter implements Filter {
     private static final DateTimeFormatter formatter =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    // 회원가입, 로그인 화이트 리스트
+    private static final String[] WHITE_LIST = {"/api/users/signup","/auth/login"};
+
 
     /**
      * 요청을 가로채어 로그를 출력한 후, 다음 필터로 체인을 넘깁니다.
@@ -44,29 +48,29 @@ public class RequestLoggingFilter implements Filter {
     ) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String requestURI = ((HttpServletRequest) request).getRequestURI();
-        log.info("요청 필터 로직 실행 - 요청 URI: {}", requestURI);
-
+        String method = httpRequest.getMethod();
         try {
+            // 회원가입의 경우 바로 로깅
+            if ( Arrays.asList(WHITE_LIST).contains(requestURI)) {
+                log.info("sign REQUEST , method= [{}], uri= [ {} ]", method, requestURI);
+
+                chain.doFilter(request, response);
+                return;
+            }
             LoginResponseDto user = SessionManager.getLoggedInUser(httpRequest);
             Long userId = user.getUserId();
 
-            String method = httpRequest.getMethod();
-            requestURI = httpRequest.getRequestURI();
             // timestamp는 혹시 모르는 db 저장용, 사용은 안함
             String timestamp = LocalDateTime.now().format(formatter);
 
             log.info("userId={} REQUEST , method= [{}], uri= [ {} ]", userId, method, requestURI);
 
         } catch (RuntimeException e) {
-            String method = httpRequest.getMethod();
-            requestURI = httpRequest.getRequestURI();
 
             // 로그인 정보가 없는 경우
             log.info("??? REQUEST, method=[{}], uri=[{}]", method, requestURI);
 
         }
-        log.info("요청 필터 로직 끝 - 요청 URI: {}", requestURI);
         chain.doFilter(request, response);
-
     }
 }
