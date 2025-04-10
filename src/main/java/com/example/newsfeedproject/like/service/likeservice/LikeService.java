@@ -1,5 +1,7 @@
 package com.example.newsfeedproject.like.service.likeservice;
 
+import com.example.newsfeedproject.comment.entity.Comment;
+import com.example.newsfeedproject.comment.repository.CommentRepository;
 import com.example.newsfeedproject.like.dto.likedto.LikeRequestDto;
 import com.example.newsfeedproject.like.dto.likedto.LikeType;
 import com.example.newsfeedproject.like.entity.likeentity.CommentLike;
