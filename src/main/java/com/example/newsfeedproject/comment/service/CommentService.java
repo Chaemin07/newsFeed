@@ -42,21 +42,24 @@ public class CommentService {
           .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
               "Does not exist parentId =" + parentId)));
       owner = optionalOwner.get();
+      log.info("inside if checks : {},{}",owner,target );
     } else if (requestDto.getParentType()==0){
       Optional<NewsFeed> optionalOwner = Optional.ofNullable(newsFeedRepository.findById(parentId)
           .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
               "Does not exist parentId =" + parentId)));
       owner = optionalOwner.get();
+      log.info("inside if checks : {}",owner);
     } else {throw new MismatchException(HttpStatus.BAD_REQUEST, "잘못된 입력값입니다");    }
     Comment comment = new Comment(parentId, requestDto.getParentType(), owner, userName, userId,
         requestDto.getContents(), 0L, "active");
-
+    log.info("inside if checks : {},{},{},{}",owner,comment,userName,userId );
     commentRepository.save(comment);
     return new CommentResponseDto(
         comment.getParentId(),
         comment.getParentType(),
         comment.getUsername(),
         comment.getContents(),
+        comment.getAnswers(),
         comment.getCreatedAt(),
         comment.getModifiedAt()
     );
@@ -66,7 +69,7 @@ public class CommentService {
   public void updateSubs(Long parentId, Long parentType) {
     Long answers;
     try {
-      Comment findComment = commentRepository.findByParentIdAndParentType(parentId, parentType);
+      Comment findComment = commentRepository.findByParentIdAndParentType(parentId, parentType);//복수결과나와서 에러
       if (parentType == 0) {
         answers = commentRepository.countByParentIdAndParentType(parentId, 1L);
       } else if (parentType == 1) {
@@ -78,7 +81,7 @@ public class CommentService {
       findComment.UpdateSubs(answers);
       commentRepository.save(findComment);
 
-    } catch (Exception e) {
+    } catch (MismatchException e) {
       log.error("Exception error: 갱신기 오류발생!!");
     }
   }
@@ -94,28 +97,38 @@ public class CommentService {
         findComment.getParentType(),
         findComment.getUsername(),
         findComment.getContents(),
+        findComment.getAnswers(),
         findComment.getCreatedAt(),
         findComment.getModifiedAt());
   }
 
   public void updateComment(Long userid, Long commentId, String contents) {
     Comment findComment = commentRepository.findByCommentIdOrElseThrow(commentId);
-    if(!userid.equals(findComment.getUserid().getId())||userid.equals(findComment.getOwner().getCreator().getId())){
-      throw new MismatchException(HttpStatus.UNAUTHORIZED,"작성자가 아니면 수정 및 삭제하실 수 없습니다.");
+    StringBuilder status=new StringBuilder();
+    if (!userid.equals(findComment.getUserid().getId())) {
+      if (!userid.equals(findComment.getOwner().getCreator().getId())) {
+        throw new MismatchException(HttpStatus.UNAUTHORIZED, "작성자 또는 게시자가 아니면 수정 및 삭제하실 수 없습니다.");
+      }
     }
     if (!Objects.equals(findComment.getStatus(), "active")) {
       throw new MismatchException(HttpStatus.UNAUTHORIZED, "해당 글은 이미 삭제되었습니다.");
     }
-    findComment.UpdateComment(commentId, contents);
+    if (contents.equals("삭제된 글입니다.")){
+      status.append("disabled");
+    } else status.append("active");
+    findComment.UpdateComment(commentId, contents, status.toString());
     commentRepository.save(findComment);
 }
 
   public void deleteComment(Long commentId) {
     Comment findComment = commentRepository.findByCommentIdOrElseThrow(commentId);
-    if(Objects.equals(findComment.getStatus(), "active")){
-      throw new MismatchException(HttpStatus.UNAUTHORIZED,"해당 글은 삭제를 위한 절차를 거치지 않았습니다.");
+    if (Objects.equals(findComment.getStatus(), "active")) {
+      throw new MismatchException(HttpStatus.UNAUTHORIZED, "해당 글은 삭제를 위한 절차를 거치지 않았습니다.");
+    } else if (Objects.equals(findComment.getStatus(), "disabled")) {
+      commentRepository.delete(findComment);
+    } else {
+      throw new MismatchException(HttpStatus.BAD_REQUEST, "파라메터의 조작이 감지되었습니다.");
     }
-    commentRepository.delete(findComment);
   }
 
   public List<CommentResponseDto> findAllByParentId(Long parentId,Long parentType) {//댓글 or 답글 전체 조회

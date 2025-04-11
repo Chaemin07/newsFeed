@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -31,11 +32,10 @@ import jakarta.validation.constraints.NotNull;
 
 
 @RestController
-//@RequestMapping("/newsFeed/comment")
-@RequestMapping("/comment")
+@RequestMapping("/newsfeed/comment")
 @RequiredArgsConstructor
 @Validated
-
+@Slf4j//테스트용 로그
 public class CommentController {
 
   private final CommentService commentService;
@@ -49,12 +49,12 @@ public class CommentController {
     long userId = user.getUserId();
     User loginUser = userService.findById(userId);
     CommentResponseDto commentResponseDto = commentService.save(requestDto, user.getUserName(),loginUser, parentId);
+    log.info("controller{},{}",loginUser,requestDto);
     return new ResponseEntity<>(commentResponseDto, HttpStatus.CREATED);
   }
 
     @GetMapping(value="/comments")//전체조회-댓글,답글
     public ResponseEntity<List<CommentResponseDto>> findAllByParentId(@RequestParam @NotNull @Min(1) Long parentId,@RequestParam @NotNull Long parentType){
-      commentService.updateSubs(parentId, parentType);
       List<CommentResponseDto> commentResponseDtoList = commentService.findAllByParentId(parentId, parentType);
       return new ResponseEntity<>(commentResponseDtoList, HttpStatus.OK);
     }

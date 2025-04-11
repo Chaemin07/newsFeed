@@ -48,9 +48,10 @@ public class Comment extends BaseEntity {
     this.status=status;
   }
 
-  public void UpdateComment(Long commentId, String contents){
+  public void UpdateComment(Long commentId, String contents, String status){
     this.commentId=commentId;
     this.contents=contents;
+    this.status=status;
   }
 
   public void UpdateSubs(Long answers){
