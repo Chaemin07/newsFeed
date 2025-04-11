@@ -12,20 +12,20 @@ import java.util.List;
 public interface NewsFeedRepository extends JpaRepository<NewsFeed, Long> {
 
     /**
-     * 팔로잉한 사람들 게시글(최신순, 페이징)
+     * Id List 기준 -> 작성한 게시글 목록(최신순, 페이징)
      *
-     * @param creatorIds : List<Long> > 게시글을 작성한 사용자들의 ID 목록 (내가 팔로우한 유저들)
-     * @param pageable : Pageable > 페이징 및 정렬 정보 (몇 페이지를 조회할지, 몇 개씩 가져올지 등)
-     * @return Page<NewsFeed> : 게시글을 담고 있는 페이지 객체 > 내가 팔로우한 사람들의 게시글 목록 (최신순 정렬, 페이징 포함)
+     * @param creatorIds 조회하려는 사용자 Id 목록 -> List 타입
+     * @param pageable 페이징
+     * @return 뉴스피드 목록(최신순)
      */
     Page<NewsFeed> findByCreatorIdInOrderByCreatedAtDesc(List<Long> creatorIds, Pageable pageable);
 
     /**
-     * 특정 사용자가 작성한 게시글(최신순, 페이징).
+     * Id 기준 -> 작성한 게시글 목록(최신순, 페이징)
      *
-     * @param creatorId 게시글 작성자(사용자)의 고유 ID
-     * @param pageable 페이지 번호, 크기, 정렬 기준이 담긴 객체
-     * @return 사용자가 작성한 게시글 목록 (최신순 정렬, 페이징 포함)
+     * @param creatorId 조회하려는 Id -> Long 타입
+     * @param pageable 페이징
+     * @return 뉴스피드 목록(최신순)
      */
     Page<NewsFeed> findByCreatorIdOrderByCreatedAtDesc(Long creatorId, Pageable pageable);
 }
