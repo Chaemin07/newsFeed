@@ -8,8 +8,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-  void countByParentId(Long parentId);
-
   default Comment findByCommentIdOrElseThrow(Long commentId){
     return findByCommentId(commentId).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id =" + commentId));
