@@ -12,6 +12,10 @@ public enum ErrorCode {
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
 	INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 	SAME_AS_OLD_PASSWORD(HttpStatus.BAD_REQUEST, "기존 비밀번호와 동일한 비밀번호로는 변경할 수 없습니다."),
+	// 로그인 필요 - 로그인 필터 에러코드
+	LOGIN_REQUIRED(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
+	// 탈퇴한 사용자 접근 - ActiveUserOnly필터 에러코드
+	DEACTIVATED_USER(HttpStatus.FORBIDDEN, "비활성 사용자입니다. 로그인이 제한됩니다."),
 
 	// FeedService에 게시글 삭제 부분에서 사용중!
 	UNAUTHORIZED_USER(HttpStatus.FORBIDDEN, "작성자만 수정/삭제할 수 있습니다.");

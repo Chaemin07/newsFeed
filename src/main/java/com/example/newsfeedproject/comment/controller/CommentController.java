@@ -32,7 +32,7 @@ import jakarta.validation.constraints.NotNull;
 
 
 @RestController
-@RequestMapping("/newsfeed/comment")
+@RequestMapping("/newsfeeds/comment")
 @RequiredArgsConstructor
 @Validated
 @Slf4j//테스트용 로그
