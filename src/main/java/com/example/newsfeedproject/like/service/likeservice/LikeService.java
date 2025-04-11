@@ -104,7 +104,7 @@ public class LikeService {
                 // 404 DB 내 데이터 존재 x
                 NewsFeed checkFeed = newsFeedRepository.findById(comment.getParentId())
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
-                if(checkFeed.getCreator().getId().equals(userId)) {
+                if(comment.getUserid().getId().equals(userId)) {
                     // 400 본인이 작성한 댓글에 좋아요를 요청 시
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "본인 작성글에는 좋아요를 누를 수 없습니다.");
                 }
