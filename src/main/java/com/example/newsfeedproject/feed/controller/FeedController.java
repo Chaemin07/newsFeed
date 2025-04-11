@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.example.newsfeedproject.auth.SessionManager.LOGIN_USER;
 
 @RestController
-@RequestMapping("/newsfeed")
+@RequestMapping("/newsfeeds")
 @RequiredArgsConstructor
 public class FeedController {
 
@@ -47,35 +47,24 @@ public class FeedController {
     }
 
     /**
-     * 내가 쓴 피드 전체 조회(프로필 눌렀을때 생각하면 됨)
+     * 피드 전체 조회
+     * 1. 로그인한 유저 + 유저의 친구들 : /newsfeeds?page=0&size=10
+     * 2. 유저Id -> 친구의 피드 : /newsfeeds?userId=3&page=0&size=10
      *
-     * @param session
-     * @param pageable
+     * @param userId /newsfeeds?userId=XX -> 친구 조회
+     * @param session 로그인한 유저의 세션 받기
+     * @param pageable 페이징 /newsfeeds?page=0&size=10&sort=createdAt,desc
      * @return
      */
-    @GetMapping("/myprofile")
-    public ResponseEntity<Page<FeedResponseDto>> getMyFeeds(
+    @GetMapping
+    public ResponseEntity<Page<FeedResponseDto>> getFeeds(
+            @RequestParam(required = false) Long userId,
             HttpSession session,
             Pageable pageable
     ) {
+        // 로그인한 유저+친구의 피드 조회라 로그인 세션이 필요
         User loginUser = getLoginUser(session);
-        return ResponseEntity.ok(feedService.getMyFeeds(loginUser, pageable));
-    }
-
-    /**
-     * 내가 쓴 피드 + 팔로잉한 사람 피드 조회(인스타 홈 느낌)
-     *
-     * @param session
-     * @param pageable
-     * @return
-     */
-    @GetMapping("/home")
-    public ResponseEntity<Page<FeedResponseDto>> getFollowingFeeds(
-            HttpSession session,
-            Pageable pageable
-    ) {
-        User loginUser = getLoginUser(session);
-        return ResponseEntity.ok(feedService.getFeedsByFollowing(loginUser, pageable));
+        return ResponseEntity.ok(feedService.getFeeds(loginUser, userId, pageable));
     }
 
     /**
