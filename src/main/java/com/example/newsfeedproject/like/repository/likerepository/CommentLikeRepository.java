@@ -14,5 +14,4 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
 
     long countByComment_ParentId(long id);
 
-
 }

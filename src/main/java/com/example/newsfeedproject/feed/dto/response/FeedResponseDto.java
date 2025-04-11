@@ -26,4 +26,5 @@ public class FeedResponseDto {
      * private Long commentCount;
      * private Long likeCount;
      */
+
 }
