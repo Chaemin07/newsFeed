@@ -16,9 +16,16 @@ public enum ErrorCode {
 	LOGIN_REQUIRED(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
 	// 탈퇴한 사용자 접근 - ActiveUserOnly필터 에러코드
 	DEACTIVATED_USER(HttpStatus.FORBIDDEN, "비활성 사용자입니다. 로그인이 제한됩니다."),
-
+	//comment 입력값 오류와 잘못된 값
+	WRONG_PARENT_TYPE(HttpStatus.BAD_REQUEST, "잘못된 타입 값입니다."),
+	DOES_NOT_EXIST(HttpStatus.NOT_FOUND, "대상을 찾을 수 없습니다."),
+	ACCESS_DENIED(HttpStatus.FORBIDDEN, "권한이 없습니다."),
+	PREEMPTIVE_ACTION_REQUIRED(HttpStatus.BAD_REQUEST, "글 무효화 작업이 선행되어야 합니다."),
+	UNAUTHORIZED_DATA_MANUPILATION_FOUND(HttpStatus.BAD_REQUEST, "데이터가 올바르지 않습니다."),
 	// FeedService에 게시글 삭제 부분에서 사용중!
 	UNAUTHORIZED_USER(HttpStatus.FORBIDDEN, "작성자만 수정/삭제할 수 있습니다.");
+
+
 
 	private final HttpStatus status;
 	private final String message;

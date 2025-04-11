@@ -1,17 +1,18 @@
 package com.example.newsfeedproject.comment.repository;
 
 import com.example.newsfeedproject.comment.entity.Comment;
+import com.example.newsfeedproject.common.exception.CustomException;
+import com.example.newsfeedproject.common.exception.ErrorCode;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
   default Comment findByCommentIdOrElseThrow(Long commentId){
     return findByCommentId(commentId).orElseThrow(
-        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id =" + commentId));
+        () -> new CustomException(ErrorCode.DOES_NOT_EXIST));
   }
 
   Optional<Comment> findByCommentId(Long commentId);
