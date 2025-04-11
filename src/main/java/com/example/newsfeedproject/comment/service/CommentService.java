@@ -4,7 +4,8 @@ package com.example.newsfeedproject.comment.service;
 import com.example.newsfeedproject.comment.dto.CommentRequestDto;
 import com.example.newsfeedproject.comment.dto.CommentResponseDto;
 import com.example.newsfeedproject.comment.entity.Comment;
-import com.example.newsfeedproject.common.exception.MismatchException;
+import com.example.newsfeedproject.common.exception.CustomException;
+import com.example.newsfeedproject.common.exception.ErrorCode;
 import com.example.newsfeedproject.comment.repository.CommentRepository;
 
 import com.example.newsfeedproject.feed.entity.NewsFeed;
@@ -34,22 +35,20 @@ public class CommentService {
     if(requestDto.getParentType()==1){
       Optional<Comment> optionalParentComment = Optional.ofNullable(
           commentRepository.findByCommentId(parentId)
-              .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist parent comment="+parentId)));
+              .orElseThrow(() -> new CustomException(ErrorCode.DOES_NOT_EXIST)));
       Comment parentComment = optionalParentComment.get();
       target = parentComment.getParentId();
 
       Optional<NewsFeed> optionalOwner = Optional.ofNullable(newsFeedRepository.findById(target)
-          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-              "Does not exist parentId =" + parentId)));
+          .orElseThrow(() -> new CustomException(ErrorCode.DOES_NOT_EXIST)));
       owner = optionalOwner.get();
 
     } else if (requestDto.getParentType()==0){
       Optional<NewsFeed> optionalOwner = Optional.ofNullable(newsFeedRepository.findById(parentId)
-          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-              "Does not exist parentId =" + parentId)));
+          .orElseThrow(() -> new CustomException(ErrorCode.DOES_NOT_EXIST)));
       owner = optionalOwner.get();
 
-    } else {throw new MismatchException(HttpStatus.BAD_REQUEST, "잘못된 입력값입니다");    }
+    } else {throw new CustomException(ErrorCode.WRONG_PARENT_TYPE);    }
     Comment comment = new Comment(parentId, requestDto.getParentType(), owner, userName, userId,
         requestDto.getContents(), "active");
     log.info("inside if checks : {},{},{},{}",owner,comment,userName,userId );
@@ -66,7 +65,7 @@ public class CommentService {
 
   public CommentResponseDto findByCommentId(Long commentId) {//단일 댓글 조회
     Optional<Comment> optionalComment = commentRepository.findByCommentId(commentId);
-    if(optionalComment.isEmpty()){throw new MismatchException(HttpStatus.NOT_FOUND, "해당 글이 없습니다 : "+commentId);}
+    if(optionalComment.isEmpty()){throw new CustomException(ErrorCode.DOES_NOT_EXIST);}
     Comment findComment = optionalComment.get();
     return new CommentResponseDto(
         findComment.getParentId(),
@@ -82,11 +81,11 @@ public class CommentService {
     StringBuilder status=new StringBuilder();
     if (!userid.equals(findComment.getUserid().getId())) {
       if (!userid.equals(findComment.getOwner().getCreator().getId())) {
-        throw new MismatchException(HttpStatus.UNAUTHORIZED, "작성자 또는 게시자가 아니면 수정 및 삭제하실 수 없습니다.");
+        throw new CustomException(ErrorCode.ACCESS_DENIED);
       }
     }
     if (!Objects.equals(findComment.getStatus(), "active")) {
-      throw new MismatchException(HttpStatus.UNAUTHORIZED, "해당 글은 이미 삭제되었습니다.");
+      throw new CustomException(ErrorCode.DOES_NOT_EXIST);
     }
     if (contents.equals("삭제된 글입니다.")){
       status.append("disabled");
@@ -98,11 +97,11 @@ public class CommentService {
   public void deleteComment(Long commentId) {//완전삭제
     Comment findComment = commentRepository.findByCommentIdOrElseThrow(commentId);
     if (Objects.equals(findComment.getStatus(), "active")) {
-      throw new MismatchException(HttpStatus.UNAUTHORIZED, "해당 글은 삭제를 위한 절차를 거치지 않았습니다.");
+      throw new CustomException(ErrorCode.PREEMPTIVE_ACTION_REQUIRED);
     } else if (Objects.equals(findComment.getStatus(), "disabled")) {
       commentRepository.delete(findComment);
     } else {
-      throw new MismatchException(HttpStatus.BAD_REQUEST, "파라메터의 조작이 감지되었습니다.");
+      throw new CustomException(ErrorCode.UNAUTHORIZED_DATA_MANUPILATION_FOUND);
     }
   }
 
@@ -110,7 +109,6 @@ public class CommentService {
     if(parentType==0||parentType==1) {
       List<Comment> commentlist = commentRepository.findAllByParentIdAndParentType(parentId, parentType);
         return  commentlist.stream().map(CommentResponseDto::toDto).toList();
-
     }else{
       log.warn("불순한 조작값 입력 감지");
       return new ArrayList<>();

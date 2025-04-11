@@ -1,6 +1,9 @@
-package com.example.newsfeedproject.common.filter;
+package com.example.newsfeedproject.config;
 
 
+import com.example.newsfeedproject.common.filter.ActiveUserOnlyFilter;
+import com.example.newsfeedproject.common.filter.LoginFilter;
+import com.example.newsfeedproject.common.filter.RequestLoggingFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
