@@ -48,6 +48,7 @@ public class FeedController {
 
     /**
      * 내가 쓴 피드 전체 조회(프로필 눌렀을때 생각하면 됨)
+     * /myprofile?page=0&size=10&sort=createdAt,desc
      *
      * @param session
      * @param pageable
@@ -64,6 +65,7 @@ public class FeedController {
 
     /**
      * 내가 쓴 피드 + 팔로잉한 사람 피드 조회(인스타 홈 느낌)
+     * /home?page=0&size=10&sort=createdAt,desc
      *
      * @param session
      * @param pageable
