@@ -28,13 +28,13 @@ public class FeedService {
     private final FollowService followService;
 
     /**
-     * 단건 조회 할때 댓글 수, 좋아요 수 추가하고 싶은데 상의 해보기
+     * 단건 조회 할때 댓글 수, 좋아요 수 추가하고 싶은데 상의 해보기 -> 시간 없음...!
      * private final CommentRepository commentRepository;
      * private final LikeRepository likeRepository;
      */
 
     /**
-     * 게시글을 생성, 저장
+     * 피드 생성, 저장
      *
      * 로그인 유저의 피드 내용 -> 생성 -> 응답 Dto로 반환
      *
@@ -50,41 +50,38 @@ public class FeedService {
     }
 
     /**
-     * 로그인 유저 피드 전체(최신순, 페이징) -> 인스타 본인 프로필이라고 생각하면 편함
+     * 피드 전체 조회(특정 유저, 로그인유저+친구)
+     * userId != null -> 해당 유저 피드 조회(최신순)
+     * userId == null -> 로그인 유저 + 친구들 피드(최신순)
      *
-     * @param loginUser 현재 로그인한 사용자
-     * @param pageable 페이지 번호, 크기, 정렬 정보
-     * @return 본인이 작성한 피드 목록
-     */
-    @Transactional(readOnly = true)
-    public Page<FeedResponseDto> getMyFeeds(User loginUser, Pageable pageable) {
-        Page<NewsFeed> myFeeds = feedRepository.findByCreatorIdOrderByCreatedAtDesc(
-                loginUser.getId(), pageable
-        );
-        return myFeeds.map(this::toDto);
-    }
-
-    /**
-     * 본인 + 팔로잉한 사람들의 피드(최신순, 페이징)
-     *
-     * @param loginUser 현재 로그인한 사용자
+     * @param loginUser 로그인 유저
+     * @param userId 조회할 유저 id
      * @param pageable 페이징
-     * @return 로그인 유저 + 팔로우한 유저들의 피드 목록
+     * @return 페이징된 게시글 목록
      */
     @Transactional(readOnly = true)
-    public Page<FeedResponseDto> getFeedsByFollowing(User loginUser, Pageable pageable) {
-        // 1. 팔로잉한 사람 정보 불러오기(DTO 리스트로)
+    public Page<FeedResponseDto> getFeeds(User loginUser, Long userId, Pageable pageable) {
+
+        // 유저 id 입력 여부 확인
+        if (userId != null) {
+            return feedRepository.findByCreatorIdOrderByCreatedAtDesc(userId, pageable)
+                    .map(this::toDto);
+        }
+
+        // 로그인 유저의 id에서 팔로우 불러오기 -> List로 변환
         List<FollowListResponseDto> followingList = followService.getFollowing(loginUser.getId());
 
-        // 2. ID만 추출 -> followservice에 id 조회하는게 없어서
+        // 팔로우 List에 있는 팔로우id 가져오기 -> Long타입 List로 변환
         List<Long> followingIds = followingList.stream()
-                .map(FollowListResponseDto::getId)// Dto에서 추출
+                .map(FollowListResponseDto::getId)
                 .collect(Collectors.toList());
-        // 3. 내 글도 포함되게 내 ID 추가
+
+        // 로그인 유저의 게시글도 포함되기 때문에 List에 유저 추가하기
         followingIds.add(loginUser.getId());
-        // 4. 최신순으로 전체 조회
-        Page<NewsFeed> feeds = feedRepository.findByCreatorIdInOrderByCreatedAtDesc(followingIds, pageable);
-        return feeds.map(this::toDto);
+
+        //List에 포함된 모든 사람들의 글 반환
+        return feedRepository.findByCreatorIdInOrderByCreatedAtDesc(followingIds, pageable)
+                .map(this::toDto);
     }
 
     /**
@@ -100,7 +97,6 @@ public class FeedService {
                 .orElseThrow(() -> new EntityNotFoundException("피드를 찾을 수 없습니다."));
         return toDto(feed);
     }
-
 
     /**
      * 피드 수정 (본인만)
