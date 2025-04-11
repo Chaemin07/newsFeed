@@ -4,6 +4,7 @@ package com.example.newsfeedproject.comment.service;
 import com.example.newsfeedproject.comment.dto.CommentRequestDto;
 import com.example.newsfeedproject.comment.dto.CommentResponseDto;
 import com.example.newsfeedproject.comment.entity.Comment;
+import com.example.newsfeedproject.common.entity.BaseEntity;
 import com.example.newsfeedproject.common.exception.CustomException;
 import com.example.newsfeedproject.common.exception.ErrorCode;
 import com.example.newsfeedproject.comment.repository.CommentRepository;
@@ -17,14 +18,12 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CommentService {
+public class CommentService extends BaseEntity {
   private final CommentRepository commentRepository;
   private final NewsFeedRepository newsFeedRepository;
 

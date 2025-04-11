@@ -1,11 +1,12 @@
 package com.example.newsfeedproject.comment.dto;
 
+import com.example.newsfeedproject.common.entity.BaseEntity;
 import com.example.newsfeedproject.comment.entity.Comment;
 import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
-public class CommentResponseDto {
+public class CommentResponseDto extends BaseEntity {
 
   private final Long parentId;
   private final Long parentType;
