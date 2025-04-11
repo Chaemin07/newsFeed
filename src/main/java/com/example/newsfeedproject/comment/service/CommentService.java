@@ -51,7 +51,7 @@ public class CommentService {
 
     } else {throw new MismatchException(HttpStatus.BAD_REQUEST, "잘못된 입력값입니다");    }
     Comment comment = new Comment(parentId, requestDto.getParentType(), owner, userName, userId,
-        requestDto.getContents(), 0L, "active");
+        requestDto.getContents(), "active");
     log.info("inside if checks : {},{},{},{}",owner,comment,userName,userId );
     commentRepository.save(comment);
     return new CommentResponseDto(
@@ -59,34 +59,10 @@ public class CommentService {
         comment.getParentType(),
         comment.getUsername(),
         comment.getContents(),
-        comment.getAnswers(),
         comment.getCreatedAt(),
         comment.getModifiedAt()
     );
   }
-
-  //답글 수 갱신기. 좋아요를 추적하지않음.
-  public void updateSubs(Long parentId, Long parentType) {
-    Long answers;
-    try {
-      Comment findComment = commentRepository.findByParentIdAndParentType(parentId, parentType);//복수결과나와서 에러
-      if (parentType == 0) {
-        answers = commentRepository.countByParentIdAndParentType(parentId, 1L);
-      } else if (parentType == 1) {
-        answers = 0L;
-      } else {
-        throw new MismatchException(HttpStatus.BAD_REQUEST, "잘못된 입력값입니다");
-      }
-
-      findComment.UpdateSubs(answers);
-      commentRepository.save(findComment);
-
-    } catch (MismatchException e) {
-      log.error("Exception error: 갱신기 오류발생!!");
-    }
-  }
-
-
 
   public CommentResponseDto findByCommentId(Long commentId) {//단일 댓글 조회
     Optional<Comment> optionalComment = commentRepository.findByCommentId(commentId);
@@ -97,12 +73,11 @@ public class CommentService {
         findComment.getParentType(),
         findComment.getUsername(),
         findComment.getContents(),
-        findComment.getAnswers(),
         findComment.getCreatedAt(),
         findComment.getModifiedAt());
   }
 
-  public void updateComment(Long userid, Long commentId, String contents) {
+  public void updateComment(Long userid, Long commentId, String contents) {//업데이트기
     Comment findComment = commentRepository.findByCommentIdOrElseThrow(commentId);
     StringBuilder status=new StringBuilder();
     if (!userid.equals(findComment.getUserid().getId())) {
@@ -120,7 +95,7 @@ public class CommentService {
     commentRepository.save(findComment);
 }
 
-  public void deleteComment(Long commentId) {
+  public void deleteComment(Long commentId) {//완전삭제
     Comment findComment = commentRepository.findByCommentIdOrElseThrow(commentId);
     if (Objects.equals(findComment.getStatus(), "active")) {
       throw new MismatchException(HttpStatus.UNAUTHORIZED, "해당 글은 삭제를 위한 절차를 거치지 않았습니다.");
@@ -131,7 +106,7 @@ public class CommentService {
     }
   }
 
-  public List<CommentResponseDto> findAllByParentId(Long parentId,Long parentType) {//댓글 or 답글 전체 조회
+  public List<CommentResponseDto> findAllByParentIdAndParentType(Long parentId,Long parentType) {//댓글 or 답글 전체 조회
     if(parentType==0||parentType==1) {
       return commentRepository.findAllByParentIdAndParentType(parentId, parentType).stream()
           .map(CommentResponseDto::toDto).toList();

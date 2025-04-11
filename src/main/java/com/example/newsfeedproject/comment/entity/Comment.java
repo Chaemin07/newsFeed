@@ -30,21 +30,18 @@ public class Comment extends BaseEntity {
   @Column
   private String contents;
   @Column
-  private Long answers;
-  @Column
   private String status;
 
   public Comment(){
   }
 
-  public Comment(Long parentId, Long parentType, NewsFeed owner, String username, User userid, String contents, Long answers, String status) {
+  public Comment(Long parentId, Long parentType, NewsFeed owner, String username, User userid, String contents, String status) {
     this.parentId=parentId;
     this.parentType=parentType;
     this.owner=owner;
     this.username=username;
     this.userid=userid;
     this.contents=contents;
-    this.answers=answers;
     this.status=status;
   }
 
@@ -52,10 +49,6 @@ public class Comment extends BaseEntity {
     this.commentId=commentId;
     this.contents=contents;
     this.status=status;
-  }
-
-  public void UpdateSubs(Long answers){
-    this.answers=answers;
   }
 
 }

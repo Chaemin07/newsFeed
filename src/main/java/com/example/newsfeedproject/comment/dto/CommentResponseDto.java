@@ -11,7 +11,6 @@ public class CommentResponseDto {
   private final Long parentType;
   private final String username;
   private final String contents;
-  private final Long answers;
   private final LocalDateTime createdAt;
   private final LocalDateTime modifiedAt;
 
@@ -20,14 +19,12 @@ public class CommentResponseDto {
       Long parentType,
       String username,
       String contents,
-      Long answers,
       LocalDateTime createdAt,
       LocalDateTime modifiedAt) {
     this.parentId = parentId;
     this.parentType = parentType;
     this.username = username;
     this.contents = contents;
-    this.answers=answers;
     this.createdAt = createdAt;
     this.modifiedAt = modifiedAt;
   }
@@ -38,7 +35,6 @@ public class CommentResponseDto {
         comment.getParentType(),
         comment.getUsername(),
         comment.getContents(),
-        comment.getAnswers(),
         comment.getCreatedAt(),
         comment.getModifiedAt());
   }
