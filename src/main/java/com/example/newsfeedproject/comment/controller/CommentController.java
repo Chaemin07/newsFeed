@@ -80,8 +80,10 @@ public class CommentController {
   }
 
   @DeleteMapping("/{commentId}")//완전 삭제용
-  public ResponseEntity<Void> deleteComment(@PathVariable @NotNull @Min(1) Long commentId) {
-    commentService.deleteComment(commentId);
+  public ResponseEntity<Void> deleteComment(@PathVariable @NotNull @Min(1) Long commentId,HttpSession session) {
+    LoginResponseDto user = (LoginResponseDto)session.getAttribute(LOGIN_USER);
+    Long userId=user.getUserId();
+    commentService.deleteComment(userId, commentId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }

@@ -4,7 +4,6 @@ package com.example.newsfeedproject.comment.service;
 import com.example.newsfeedproject.comment.dto.CommentRequestDto;
 import com.example.newsfeedproject.comment.dto.CommentResponseDto;
 import com.example.newsfeedproject.comment.entity.Comment;
-import com.example.newsfeedproject.common.entity.BaseEntity;
 import com.example.newsfeedproject.common.exception.CustomException;
 import com.example.newsfeedproject.common.exception.ErrorCode;
 import com.example.newsfeedproject.comment.repository.CommentRepository;
@@ -23,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CommentService extends BaseEntity {
+public class CommentService{
   private final CommentRepository commentRepository;
   private final NewsFeedRepository newsFeedRepository;
 
@@ -93,8 +92,13 @@ public class CommentService extends BaseEntity {
     commentRepository.save(findComment);
 }
 
-  public void deleteComment(Long commentId) {//완전삭제
+  public void deleteComment(Long userid,Long commentId) {//완전삭제
     Comment findComment = commentRepository.findByCommentIdOrElseThrow(commentId);
+    if (!userid.equals(findComment.getUserid().getId())) {
+      if (!userid.equals(findComment.getOwner().getCreator().getId())) {
+        throw new CustomException(ErrorCode.ACCESS_DENIED);
+      }
+    }
     if (Objects.equals(findComment.getStatus(), "active")) {
       throw new CustomException(ErrorCode.PREEMPTIVE_ACTION_REQUIRED);
     } else if (Objects.equals(findComment.getStatus(), "disabled")) {
