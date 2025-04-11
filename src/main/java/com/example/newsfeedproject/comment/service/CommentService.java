@@ -42,13 +42,13 @@ public class CommentService {
           .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
               "Does not exist parentId =" + parentId)));
       owner = optionalOwner.get();
-      log.info("inside if checks : {},{}",owner,target );
+
     } else if (requestDto.getParentType()==0){
       Optional<NewsFeed> optionalOwner = Optional.ofNullable(newsFeedRepository.findById(parentId)
           .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
               "Does not exist parentId =" + parentId)));
       owner = optionalOwner.get();
-      log.info("inside if checks : {}",owner);
+
     } else {throw new MismatchException(HttpStatus.BAD_REQUEST, "잘못된 입력값입니다");    }
     Comment comment = new Comment(parentId, requestDto.getParentType(), owner, userName, userId,
         requestDto.getContents(), 0L, "active");
