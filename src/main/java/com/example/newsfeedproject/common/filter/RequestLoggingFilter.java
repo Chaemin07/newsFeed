@@ -52,7 +52,7 @@ public class RequestLoggingFilter implements Filter {
         try {
             // 회원가입의 경우 바로 로깅
             if ( Arrays.asList(WHITE_LIST).contains(requestURI)) {
-                log.info("sign REQUEST , method= [{}], uri= [ {} ]", method, requestURI);
+                log.info("WHITE_LIST log: REQUEST , method= [{}], uri= [ {} ]", method, requestURI);
 
                 chain.doFilter(request, response);
                 return;
@@ -63,12 +63,12 @@ public class RequestLoggingFilter implements Filter {
             // timestamp는 혹시 모르는 db 저장용, 사용은 안함
             String timestamp = LocalDateTime.now().format(formatter);
 
-            log.info("userId={} REQUEST , method= [{}], uri= [ {} ]", userId, method, requestURI);
+            log.info("로그인된 사용자 log: userId={} REQUEST , method= [{}], uri= [ {} ]", userId, method, requestURI);
 
         } catch (RuntimeException e) {
 
             // 로그인 정보가 없는 경우
-            log.info("??? REQUEST, method=[{}], uri=[{}]", method, requestURI);
+            log.warn("비로그인 사용자 요청 log:  REQUEST, method=[{}], uri=[{}]", method, requestURI);
 
         }
         chain.doFilter(request, response);

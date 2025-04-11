@@ -2,8 +2,13 @@ package com.example.newsfeedproject.common.filter;
 
 import com.example.newsfeedproject.auth.dto.LoginResponseDto;
 import com.example.newsfeedproject.auth.SessionManager;
+import com.example.newsfeedproject.common.exception.CustomException;
+import com.example.newsfeedproject.common.exception.ErrorCode;
+import com.example.newsfeedproject.common.utils.ErrorResponseUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.PatternMatchUtils;
 
@@ -54,18 +59,27 @@ public class LoginFilter implements Filter {
                          FilterChain chain
     ) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
         String requestURI = httpRequest.getRequestURI();
 
-        try {
-            if (!isWhiteList(requestURI)) {
-                LoginResponseDto loggedInUser = SessionManager.getLoggedInUser((HttpServletRequest) request);
-                log.info("로그인된 사용자 ID {}, 요청URI: {}", loggedInUser.getUserId(), requestURI);
+        if (!isWhiteList(requestURI)) {
+            HttpSession session = httpRequest.getSession(false);
+            // 세션x,
+            if (session == null) {
+                log.warn("세션이 없습니다");
+                // json으로 보내기
+                ErrorResponseUtil.setErrorResponse(httpResponse,ErrorCode.LOGIN_REQUIRED);
+                return;
             }
-        } catch (RuntimeException e) {
-            log.info("로그인되지 않은 사용자입니다!");
+            //  세션은 있지만 유저가 null
+            LoginResponseDto user = SessionManager.getLoginUser(session);
+            if (user == null) {
+                log.warn("로그인 정보가 없습니다!");
+                ErrorResponseUtil.setErrorResponse(httpResponse,ErrorCode.LOGIN_REQUIRED);
+                return;
+            }
         }
 
-        // 로그인된 사용자 또는 화이트리스트 경로일 경우 다음 필터로 요청 전달
         chain.doFilter(request, response);
     }
 

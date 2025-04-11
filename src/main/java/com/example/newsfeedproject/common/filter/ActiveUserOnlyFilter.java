@@ -2,6 +2,9 @@ package com.example.newsfeedproject.common.filter;
 
 import com.example.newsfeedproject.auth.dto.LoginResponseDto;
 import com.example.newsfeedproject.auth.SessionManager;
+import com.example.newsfeedproject.common.exception.CustomException;
+import com.example.newsfeedproject.common.exception.ErrorCode;
+import com.example.newsfeedproject.common.utils.ErrorResponseUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -60,9 +63,9 @@ public class ActiveUserOnlyFilter implements Filter {
             // 로그인되어 세션은 있는 상태
             // 로그인 된 유저의 상태 true: 유효한 사용자, false: 탈회한 사용자
             if (!user.isActive()) {
-                log.info("비활성 사용자 차단: userId={}", user.getUserId());
+                log.warn("비활성 사용자 차단: userId={}", user.getUserId());
                 // 상태코드: 403, 로그인된 상태 but 권한 x
-                httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "비활성 계정입니다.");
+                ErrorResponseUtil.setErrorResponse(httpResponse,ErrorCode.DEACTIVATED_USER);
                 return;
             }
         } catch (RuntimeException e) {
