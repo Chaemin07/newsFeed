@@ -1,6 +1,8 @@
 package com.example.newsfeedproject.comment.entity;
 
 
+import com.example.newsfeedproject.feed.entity.NewsFeed;
+import com.example.newsfeedproject.user.entity.User;
 import jakarta.persistence.*;
 
 import lombok.Getter;
@@ -14,13 +16,17 @@ public class Comment extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long commentId;
   @Column
-  private Long parentId;//todo :기존과 바뀐점!!
+  private Long parentId;
   @Column
   private Long parentType;
+  @ManyToOne(fetch=FetchType.LAZY)
+  @JoinColumn(name="owner_id")
+  private NewsFeed owner;
   @Column
-  private Long likes;
-  @Column
-  private String username;//todo:기본 테스트 후 user_userid 로 변경
+  private String username;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User userid;
   @Column
   private String contents;
   @Column
@@ -31,11 +37,12 @@ public class Comment extends BaseEntity {
   public Comment(){
   }
 
-  public Comment(Long parentId, Long parentType, Long likes, String username, String contents, Long answers, String status) {
+  public Comment(Long parentId, Long parentType, NewsFeed owner, String username, User userid, String contents, Long answers, String status) {
     this.parentId=parentId;
     this.parentType=parentType;
-    this.likes=likes;
+    this.owner=owner;
     this.username=username;
+    this.userid=userid;
     this.contents=contents;
     this.answers=answers;
     this.status=status;
@@ -46,8 +53,7 @@ public class Comment extends BaseEntity {
     this.contents=contents;
   }
 
-  public void UpdateSubs(Long likes, Long answers){
-    this.likes=likes;
+  public void UpdateSubs(Long answers){
     this.answers=answers;
   }
 

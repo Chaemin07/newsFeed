@@ -1,9 +1,16 @@
 package com.example.newsfeedproject.comment.controller;
 
+import static com.example.newsfeedproject.auth.SessionManager.LOGIN_USER;
+
+import com.example.newsfeedproject.auth.dto.LoginResponseDto;
 import com.example.newsfeedproject.comment.dto.CommentRequestDto;
 import com.example.newsfeedproject.comment.dto.CommentResponseDto;
 import com.example.newsfeedproject.comment.dto.CommentUpdateRequestDto;
 import com.example.newsfeedproject.comment.service.CommentService;
+
+import com.example.newsfeedproject.user.entity.User;
+import com.example.newsfeedproject.user.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import java.util.List;
@@ -24,7 +31,7 @@ import jakarta.validation.constraints.NotNull;
 
 
 @RestController
-//@RequestMapping("/newsFeed/comment") //todo: session 에서 userId 받아오기(물어보자)
+//@RequestMapping("/newsFeed/comment")
 @RequestMapping("/comment")
 @RequiredArgsConstructor
 @Validated
@@ -32,53 +39,53 @@ import jakarta.validation.constraints.NotNull;
 public class CommentController {
 
   private final CommentService commentService;
-//
-//  @PostMapping("/{parentId}")//생성
-//  public ResponseEntity<CommentResponseDto> save(@PathVariable @NotNull @Min(1) Long parentId,
-//      @Valid @RequestBody CommentRequestDto requestDto) {
-//    CommentResponseDto commentResponseDto = commentService.save(
-//        parentId,
-//        requestDto.getParentType(),
-//        requestDto.getUsername(),
-//        requestDto.getComments()
-//    );
-//    return new ResponseEntity<>(commentResponseDto, HttpStatus.CREATED);
-//  }
-//
-//  //테스트용 더미저장소로 로컬 테스트, 좋아요를 받아오기때문에 고장납니다, 재연결 후 수정 필요
-//    @GetMapping(value="/comments")//전체조회-댓글,답글
-//    public ResponseEntity<List<CommentResponseDto>> findAllByParentId(@RequestParam @NotNull @Min(1) Long parentId,@RequestParam @NotNull Long parentType){
-//      commentService.updateSubs(parentId, parentType);
-//      List<CommentResponseDto> commentResponseDtoList = commentService.findAllByParentId(parentId, parentType);
-//      return new ResponseEntity<>(commentResponseDtoList, HttpStatus.OK);
-//    }
-//
-//  //테스트용 더미저장소로 로컬 테스트, 좋아요를 받아오기때문에 고장납니다, 재연결 후 수정 필요
-//  @GetMapping("/{commentId}")//단일조회, 페이징 도입 시 페이징 단위를 초과했을경우 답글 전체보기용, 삭제해도 무관함
-//  public ResponseEntity<CommentResponseDto> findByCommentId(@PathVariable @NotNull @Min(1) Long commentId) {
-//    commentService.updateSubs(commentId, 0L);
-//    CommentResponseDto commentResponseDto = commentService.findByCommentId(commentId);
-//    return new ResponseEntity<>(commentResponseDto, HttpStatus.OK);
-//  }
-//
-//  //테스트용 더미저장소로 로컬 테스트, 좋아요를 받아오기때문에 고장납니다, 재연결 후 수정 필요
-//  @PatchMapping("/{commentId}")//수정
-//  public ResponseEntity<CommentResponseDto> updateComment(@PathVariable @NotNull @Min(1) Long commentId,@Valid @RequestBody CommentUpdateRequestDto requestDto) {
-//    //commentService.findByCommentId(commentId);
-//    commentService.updateComment(commentId, requestDto.getContents());
-//    return new ResponseEntity<>(HttpStatus.OK);
-//  }
-//
-//  @PatchMapping("/comments/{commentId}")// 삭제 전 무효화처리, 글만 삭제시킴
-//  public ResponseEntity<CommentResponseDto> disableComment(@PathVariable @NotNull @Min(1) Long commentId) {
-//    String Disabler="삭제된 글입니다.";
-//    commentService.updateComment(commentId, Disabler);
-//    return new ResponseEntity<>(HttpStatus.OK);
-//  }
-//
-//  @DeleteMapping("/{commentId}")//완전 삭제용
-//  public ResponseEntity<Void> deleteComment(@PathVariable @NotNull @Min(1) Long commentId) {
-//    commentService.deleteComment(commentId);
-//    return new ResponseEntity<>(HttpStatus.OK);
-//  }
+  private final UserService userService;
+
+
+  @PostMapping("/{parentId}")//생성
+  public ResponseEntity<CommentResponseDto> save(@PathVariable @NotNull @Min(1) Long parentId, @Valid @RequestBody CommentRequestDto requestDto,
+      HttpSession session) {
+    LoginResponseDto user = (LoginResponseDto)session.getAttribute(LOGIN_USER);
+    long userId = user.getUserId();
+    User loginUser = userService.findById(userId);
+    CommentResponseDto commentResponseDto = commentService.save(requestDto, user.getUserName(),loginUser, parentId);
+    return new ResponseEntity<>(commentResponseDto, HttpStatus.CREATED);
+  }
+
+    @GetMapping(value="/comments")//전체조회-댓글,답글
+    public ResponseEntity<List<CommentResponseDto>> findAllByParentId(@RequestParam @NotNull @Min(1) Long parentId,@RequestParam @NotNull Long parentType){
+      commentService.updateSubs(parentId, parentType);
+      List<CommentResponseDto> commentResponseDtoList = commentService.findAllByParentId(parentId, parentType);
+      return new ResponseEntity<>(commentResponseDtoList, HttpStatus.OK);
+    }
+
+  @GetMapping("/{commentId}")//단일조회, 답글 전체보기용, 삭제해도 무관함
+  public ResponseEntity<CommentResponseDto> findByCommentId(@PathVariable @NotNull @Min(1) Long commentId) {
+    commentService.updateSubs(commentId, 0L);
+    CommentResponseDto commentResponseDto = commentService.findByCommentId(commentId);
+    return new ResponseEntity<>(commentResponseDto, HttpStatus.OK);
+  }
+
+  @PatchMapping("/{commentId}")//수정
+  public ResponseEntity<CommentResponseDto> updateComment(@PathVariable @NotNull @Min(1) Long commentId,@Valid @RequestBody CommentUpdateRequestDto requestDto, HttpSession session) {
+    LoginResponseDto user = (LoginResponseDto)session.getAttribute(LOGIN_USER);
+    Long userId=user.getUserId();
+    commentService.updateComment(userId, commentId, requestDto.getContents());
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PatchMapping("/comments/{commentId}")// 삭제 전 무효화처리, 글만 삭제시킴
+  public ResponseEntity<CommentResponseDto> disableComment(@PathVariable @NotNull @Min(1) Long commentId, HttpSession session) {
+    String Disabler="삭제된 글입니다.";
+    LoginResponseDto user = (LoginResponseDto)session.getAttribute(LOGIN_USER);
+    Long userId=user.getUserId();
+    commentService.updateComment(userId,commentId, Disabler);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @DeleteMapping("/{commentId}")//완전 삭제용
+  public ResponseEntity<Void> deleteComment(@PathVariable @NotNull @Min(1) Long commentId) {
+    commentService.deleteComment(commentId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

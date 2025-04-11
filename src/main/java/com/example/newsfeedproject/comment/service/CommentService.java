@@ -1,11 +1,15 @@
 package com.example.newsfeedproject.comment.service;
 
 
+import com.example.newsfeedproject.comment.dto.CommentRequestDto;
 import com.example.newsfeedproject.comment.dto.CommentResponseDto;
 import com.example.newsfeedproject.comment.entity.Comment;
 import com.example.newsfeedproject.common.exception.MismatchException;
 import com.example.newsfeedproject.comment.repository.CommentRepository;
 
+import com.example.newsfeedproject.feed.entity.NewsFeed;
+import com.example.newsfeedproject.feed.repository.NewsFeedRepository;
+import com.example.newsfeedproject.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,22 +18,43 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CommentService {
   private final CommentRepository commentRepository;
-//  private final LikesRepository likesRepository; //더미저장소 연결했던 코드입니다 실제 레퍼지토리랑 연결 필요.
+  private final NewsFeedRepository newsFeedRepository;
 
-  //LikesRepository likesrepository;
-  public CommentResponseDto save(Long parentId, Long parentType, String username, String contents) {//저장
-    Comment comment = new Comment(parentId, parentType, 0L, username, contents, 0L,"active");
+  public CommentResponseDto save(CommentRequestDto requestDto, String userName, User userId,
+      Long parentId) {//저장
+    Long target;
+    NewsFeed owner;
+    if(requestDto.getParentType()==1){
+      Optional<Comment> optionalParentComment = Optional.ofNullable(
+          commentRepository.findByCommentId(parentId)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist parent comment="+parentId)));
+      Comment parentComment = optionalParentComment.get();
+      target = parentComment.getParentId();
+
+      Optional<NewsFeed> optionalOwner = Optional.ofNullable(newsFeedRepository.findById(target)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+              "Does not exist parentId =" + parentId)));
+      owner = optionalOwner.get();
+    } else if (requestDto.getParentType()==0){
+      Optional<NewsFeed> optionalOwner = Optional.ofNullable(newsFeedRepository.findById(parentId)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+              "Does not exist parentId =" + parentId)));
+      owner = optionalOwner.get();
+    } else {throw new MismatchException(HttpStatus.BAD_REQUEST, "잘못된 입력값입니다");    }
+    Comment comment = new Comment(parentId, requestDto.getParentType(), owner, userName, userId,
+        requestDto.getContents(), 0L, "active");
+
     commentRepository.save(comment);
     return new CommentResponseDto(
         comment.getParentId(),
         comment.getParentType(),
-        comment.getLikes(),
         comment.getUsername(),
         comment.getContents(),
         comment.getCreatedAt(),
@@ -37,44 +62,49 @@ public class CommentService {
     );
   }
 
-//좋아요&답글 수 갱신기. 예시코드이므로 오류 가능성 있음. merge 전/후로 코드 수정 필요, 더미테스트 통과.
-//  public void updateSubs(Long parentId,Long parentType){
-//  try{
-//    Long likes = likesRepository.countByParentIdAndParentType(parentId, parentType); //이부분이 작동 중지됩니다-테스트코드용
-//    Comment findComment = commentRepository.findByParentIdAndParentType(parentId, parentType);
-//    if (parentType == 0) {
-//      Long answers = commentRepository.countByParentIdAndParentType(parentId, 1L);
-//      findComment.UpdateSubs(likes, answers);
-//      commentRepository.save(findComment);
-//    } else if (parentType ==1) {
-//      Long answers = 0L;
-//      findComment.UpdateSubs(likes, answers);
-//      commentRepository.save(findComment);
-//    } else throw new MismatchException(HttpStatus.BAD_REQUEST,"잘못된 입력값입니다");
-//
-//  }catch(Exception e){log.error("Exception error: 갱신기 오류발생!!");}
-//  }
+  //답글 수 갱신기. 좋아요를 추적하지않음.
+  public void updateSubs(Long parentId, Long parentType) {
+    Long answers;
+    try {
+      Comment findComment = commentRepository.findByParentIdAndParentType(parentId, parentType);
+      if (parentType == 0) {
+        answers = commentRepository.countByParentIdAndParentType(parentId, 1L);
+      } else if (parentType == 1) {
+        answers = 0L;
+      } else {
+        throw new MismatchException(HttpStatus.BAD_REQUEST, "잘못된 입력값입니다");
+      }
+
+      findComment.UpdateSubs(answers);
+      commentRepository.save(findComment);
+
+    } catch (Exception e) {
+      log.error("Exception error: 갱신기 오류발생!!");
+    }
+  }
 
 
 
-  public CommentResponseDto findByCommentId(Long commentId) {//단일 댓글 조회, 하나의 댓글을 자세히 보기용+페이징 추가시 limit 무시하고 답글 로드
+  public CommentResponseDto findByCommentId(Long commentId) {//단일 댓글 조회
     Optional<Comment> optionalComment = commentRepository.findByCommentId(commentId);
     if(optionalComment.isEmpty()){throw new MismatchException(HttpStatus.NOT_FOUND, "해당 글이 없습니다 : "+commentId);}
     Comment findComment = optionalComment.get();
     return new CommentResponseDto(
         findComment.getParentId(),
         findComment.getParentType(),
-        findComment.getLikes(),
         findComment.getUsername(),
         findComment.getContents(),
         findComment.getCreatedAt(),
         findComment.getModifiedAt());
   }
 
-  public void updateComment(Long commentId, String contents) {
+  public void updateComment(Long userid, Long commentId, String contents) {
     Comment findComment = commentRepository.findByCommentIdOrElseThrow(commentId);
+    if(!userid.equals(findComment.getUserid().getId())||userid.equals(findComment.getOwner().getCreator().getId())){
+      throw new MismatchException(HttpStatus.UNAUTHORIZED,"작성자가 아니면 수정 및 삭제하실 수 없습니다.");
+    }
     if (!Objects.equals(findComment.getStatus(), "active")) {
-      throw new MismatchException(HttpStatus.BAD_REQUEST, "해당 글은 이미 삭제되었습니다.");
+      throw new MismatchException(HttpStatus.UNAUTHORIZED, "해당 글은 이미 삭제되었습니다.");
     }
     findComment.UpdateComment(commentId, contents);
     commentRepository.save(findComment);
@@ -82,6 +112,9 @@ public class CommentService {
 
   public void deleteComment(Long commentId) {
     Comment findComment = commentRepository.findByCommentIdOrElseThrow(commentId);
+    if(Objects.equals(findComment.getStatus(), "active")){
+      throw new MismatchException(HttpStatus.UNAUTHORIZED,"해당 글은 삭제를 위한 절차를 거치지 않았습니다.");
+    }
     commentRepository.delete(findComment);
   }
 
