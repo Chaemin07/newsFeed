@@ -54,6 +54,7 @@ public class LoginController {
         // id와 pw가 일치하는지+ 유효한지 체크
         //아이디와 비밀번호가 맞는지 DB나 저장소에서 확인해주는 역할을 합니다.+ LoginResponseDto 리턴
         LoginResponseDto userInfo = userService.authenticate(requestDto);
+
         if (userInfo == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("아이디 또는 비밀번호가 틀렸습니다.");
