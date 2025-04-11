@@ -101,7 +101,7 @@ public class UserController {
 		// 사용자 soft delete 이후 세션 만료 필요 -> 재로그인 요청
 		SessionManager.logout(session);
 
-		// 세션 쿠키 삭제
+		// 브라우저 세션 쿠키 삭제
 		Cookie cookie = new Cookie("JSESSIONID", null);
 		cookie.setPath("/");
 		cookie.setMaxAge(0);
