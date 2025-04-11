@@ -14,7 +14,4 @@ public interface NewsFeedLikeRepository extends JpaRepository<NewsFeedLike, Long
 
     long countByNewsFeed_FeedId(long id);
 
-
-
-
 }
