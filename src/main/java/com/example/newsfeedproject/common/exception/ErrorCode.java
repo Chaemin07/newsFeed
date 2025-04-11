@@ -19,7 +19,6 @@ public enum ErrorCode {
 
 	// FeedService에 게시글 삭제 부분에서 사용중!
 	UNAUTHORIZED_USER(HttpStatus.FORBIDDEN, "작성자만 수정/삭제할 수 있습니다.");
-
 	private final HttpStatus status;
 	private final String message;
 

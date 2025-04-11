@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
 	private final UserService userService;
+
 	/*
 	 * 회원가입 요청을 처리
 	 * @param signupRequest 사용자 정보 (이메일, 비밀번호, 이름 등)
