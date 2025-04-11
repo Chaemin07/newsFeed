@@ -32,7 +32,7 @@ import jakarta.validation.constraints.NotNull;
 
 
 @RestController
-@RequestMapping("/newsfeed/comment")
+@RequestMapping("/newsfeeds/comment")
 @RequiredArgsConstructor
 @Validated
 @Slf4j//테스트용 로그
@@ -53,11 +53,11 @@ public class CommentController {
     return new ResponseEntity<>(commentResponseDto, HttpStatus.CREATED);
   }
 
-    @GetMapping(value="/comments")//전체조회-댓글,답글
-    public ResponseEntity<List<CommentResponseDto>> findAllByParentIdAndParentType(@RequestParam @NotNull @Min(1) Long parentId,@RequestParam @NotNull Long parentType){
-      List<CommentResponseDto> commentResponseDtoList = commentService.findAllByParentIdAndParentType(parentId, parentType);
-      return new ResponseEntity<>(commentResponseDtoList, HttpStatus.OK);
-    }
+  @GetMapping(value="/comments")//전체조회-댓글,답글
+  public ResponseEntity<List<CommentResponseDto>> findAllByParentIdAndParentType(@RequestParam @NotNull @Min(1) Long parentId,@RequestParam @NotNull Long parentType){
+    List<CommentResponseDto> commentResponseDtoList = commentService.findAllByParentIdAndParentType(parentId, parentType);
+    return new ResponseEntity<>(commentResponseDtoList, HttpStatus.OK);
+  }
 
   @GetMapping("/{commentId}")//단일조회, 답글 전체보기용, 삭제해도 무관함
   public ResponseEntity<CommentResponseDto> findByCommentId(@PathVariable @NotNull @Min(1) Long commentId) {
