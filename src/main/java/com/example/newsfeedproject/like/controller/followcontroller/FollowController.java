@@ -37,7 +37,7 @@ public class FollowController {
     }
 
     @GetMapping("/{id}/followers")
-    public ResponseEntity<List<FollowListResponseDto>> getFollower(@PathVariable long followingId) {
+    public ResponseEntity<List<FollowListResponseDto>> getFollower(@PathVariable("id") long followingId) {
 
         List<FollowListResponseDto> followerList = followService.getFollower(followingId);
 
@@ -45,7 +45,7 @@ public class FollowController {
     }
 
     @GetMapping("/{id}/followings")
-    public ResponseEntity<List<FollowListResponseDto>> getFollowing(@PathVariable long followerId) {
+    public ResponseEntity<List<FollowListResponseDto>> getFollowing(@PathVariable("id") long followerId) {
 
         List<FollowListResponseDto> followingList = followService.getFollowing(followerId);
 

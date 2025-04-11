@@ -40,7 +40,7 @@ public class LikeController {
     ) {
         long likecount = likeService.likeCounter(type, id);
 
-        return new ResponseEntity<>("좋아요는 총" + likecount + "개 입니다.", HttpStatus.OK);
+        return new ResponseEntity<>("좋아요는 총 " + likecount + "개 입니다.", HttpStatus.OK);
     }
 
 }
