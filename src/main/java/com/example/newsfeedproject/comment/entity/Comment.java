@@ -1,6 +1,6 @@
 package com.example.newsfeedproject.comment.entity;
 
-
+import com.example.newsfeedproject.common.entity.BaseEntity;
 import com.example.newsfeedproject.feed.entity.NewsFeed;
 import com.example.newsfeedproject.user.entity.User;
 import jakarta.persistence.*;
