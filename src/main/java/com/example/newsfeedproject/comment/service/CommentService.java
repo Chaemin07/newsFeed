@@ -108,8 +108,9 @@ public class CommentService {
 
   public List<CommentResponseDto> findAllByParentIdAndParentType(Long parentId,Long parentType) {//댓글 or 답글 전체 조회
     if(parentType==0||parentType==1) {
-      return commentRepository.findAllByParentIdAndParentType(parentId, parentType).stream()
-          .map(CommentResponseDto::toDto).toList();
+      List<Comment> commentlist = commentRepository.findAllByParentIdAndParentType(parentId, parentType);
+        return  commentlist.stream().map(CommentResponseDto::toDto).toList();
+
     }else{
       log.warn("불순한 조작값 입력 감지");
       return new ArrayList<>();
