@@ -13,8 +13,12 @@ import com.example.newsfeedproject.user.dto.UserDeleteRequestDto;
 import com.example.newsfeedproject.user.dto.UserProfileResponseDto;
 import com.example.newsfeedproject.user.dto.UserSignupRequestDto;
 import com.example.newsfeedproject.user.service.UserService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Session;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,10 +88,25 @@ public class UserController {
 	 */
 	@DeleteMapping
 	public ResponseEntity<Void> deleteUser(HttpServletRequest request,
+			HttpServletResponse response,
 			@RequestBody UserDeleteRequestDto userDeleteRequest) {
-		LoginResponseDto user = SessionManager.getLoginUser(request.getSession());
+		HttpSession session = request.getSession(false);
+		// 유효 세션 검증
+		if (session == null) {
+			throw new RuntimeException("로그인 세션이 없습니다.");
+		}
+		LoginResponseDto user = SessionManager.getLoginUser(session);
 		Long userId = user.getUserId();
 		userService.deleteUser(userId, userDeleteRequest);
+		// 사용자 soft delete 이후 세션 만료 필요 -> 재로그인 요청
+		SessionManager.logout(session);
+
+		// 세션 쿠키 삭제
+		Cookie cookie = new Cookie("JSESSIONID", null);
+		cookie.setPath("/");
+		cookie.setMaxAge(0);
+		response.addCookie(cookie);
+
 		return ResponseEntity.noContent().build();
 	}
 }
