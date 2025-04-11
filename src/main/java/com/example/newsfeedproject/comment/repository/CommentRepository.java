@@ -1,6 +1,7 @@
 package com.example.newsfeedproject.comment.repository;
 
 import com.example.newsfeedproject.comment.entity.Comment;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
   Optional<Comment> findByCommentId(Long commentId);
 
 
-  Optional<Comment> findAllByParentIdAndParentType(Long parentId, Long parentType);
+  List<Comment> findAllByParentIdAndParentType(Long parentId, Long parentType);
 
-  Long countByParentIdAndParentType(Long parentId, Long parentType);
-
-  Comment findByParentIdAndParentType(Long parentId, Long parentType);
 }
