@@ -121,7 +121,7 @@ public class UserService {
 		// 로그인 성공
 		LoginResponseDto responseDto = LoginResponseDto.builder()
 				.userId(user.getId())
-				.userName(user.getNickname()) // TODO 이름을 nickname으로 할건지, name으로 할건지
+				.userName(user.getNickname())
 				.userEmail(user.getEmail())
 				.isActive(!user.isDeleted())// 계정 활성 여부
 				.build();
