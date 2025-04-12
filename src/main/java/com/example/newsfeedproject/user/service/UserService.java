@@ -25,7 +25,7 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 
 	@Transactional
-	public void signup(UserSignupRequestDto request) {
+	public UserSignupResponseDto signup(UserSignupRequestDto request) {
 		if (!ValidationUtils.isValidEmail(request.getEmail())) {
 			throw new CustomException(ErrorCode.INVALID_EMAIL_FORMAT);
 		}
@@ -45,6 +45,13 @@ public class UserService {
 				.build();
 
 		userRepository.save(user);
+		// 회원가입시 응답dto 추가
+		UserSignupResponseDto responseDto = UserSignupResponseDto.builder()
+				.userId(user.getId())
+				.nickname(user.getNickname())
+				.email(user.getEmail())
+				.build();
+		return responseDto;
 	}
 
 	public UserProfileResponseDto getProfile(Long userId) {

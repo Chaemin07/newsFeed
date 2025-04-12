@@ -7,11 +7,8 @@ package com.example.newsfeedproject.user.controller;
 
 import com.example.newsfeedproject.auth.SessionManager;
 import com.example.newsfeedproject.auth.dto.LoginResponseDto;
-import com.example.newsfeedproject.user.dto.PasswordUpdateRequestDto;
-import com.example.newsfeedproject.user.dto.UpdateProfileRequestDto;
-import com.example.newsfeedproject.user.dto.UserDeleteRequestDto;
-import com.example.newsfeedproject.user.dto.UserProfileResponseDto;
-import com.example.newsfeedproject.user.dto.UserSignupRequestDto;
+import com.example.newsfeedproject.common.response.ApiResponse;
+import com.example.newsfeedproject.user.dto.*;
 import com.example.newsfeedproject.user.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,15 +26,20 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
 	private final UserService userService;
+
 	/*
 	 * 회원가입 요청을 처리
 	 * @param signupRequest 사용자 정보 (이메일, 비밀번호, 이름 등)
 	 * @return 성공 시 200 OK
 	 */
 	@PostMapping("/signup")
-	public ResponseEntity<Void> join(@RequestBody UserSignupRequestDto signupRequest) {
-		userService.signup(signupRequest);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<ApiResponse<UserSignupResponseDto>> join(@RequestBody UserSignupRequestDto signupRequest) {
+		// 회원가입 성공시 응답dto 추가
+		UserSignupResponseDto user = userService.signup(signupRequest);
+		String message = user.getNickname() + "님의 계정이 생성되었습니다.";
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+			.body(ApiResponse.success(HttpStatus.CREATED,message,user));
 	}
 
 	/*
@@ -45,9 +48,10 @@ public class UserController {
 	 * @return 조회된 사용자 프로필 정보
 	 */
 	@GetMapping("/{targetUserId}")
-	public ResponseEntity<UserProfileResponseDto> getProfile(@PathVariable Long targetUserId) {
-		UserProfileResponseDto response = userService.getProfile(targetUserId);
-		return ResponseEntity.ok(response);
+	public ResponseEntity<ApiResponse<UserProfileResponseDto>> getProfile(@PathVariable Long targetUserId) {
+		UserProfileResponseDto user = userService.getProfile(targetUserId);
+		String message = user.getNickname() + "님의 프로필을 조회했습니다.";
+		return ResponseEntity.ok(ApiResponse.success(message,user));
 	}
 
 	/*
@@ -57,12 +61,12 @@ public class UserController {
 	 * @return 성공 시 200 OK
 	 */
 	@PutMapping("/profile")
-	public ResponseEntity<Void> updateProfile(HttpServletRequest request,
+	public ResponseEntity<ApiResponse<Void>> updateProfile(HttpServletRequest request,
 			@RequestBody UpdateProfileRequestDto updateProfileRequest) {
 		LoginResponseDto user = SessionManager.getLoginUser(request.getSession());
 		Long userId = user.getUserId();
 		userService.updateProfile(userId, updateProfileRequest);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(ApiResponse.success("회원님의 프로필이 수정되었습니다."));
 	}
 
 	/*
@@ -72,12 +76,12 @@ public class UserController {
 	 * @return 성공 시 200 OK
 	 */
 	@PatchMapping("/password")
-	public ResponseEntity<Void> updatePassword(HttpServletRequest request,
+	public ResponseEntity<ApiResponse<Void>> updatePassword(HttpServletRequest request,
 			@RequestBody PasswordUpdateRequestDto passwordUpdateRequest) {
 		LoginResponseDto user = SessionManager.getLoginUser(request.getSession());
 		Long userId = user.getUserId();
 		userService.updatePassword(userId, passwordUpdateRequest);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(ApiResponse.success("회원님의 비밀번호가 수정되었습니다."));
 	}
 
 	/*
@@ -87,7 +91,7 @@ public class UserController {
 	 * @return 성공 시 204 No Content
 	 */
 	@DeleteMapping
-	public ResponseEntity<Void> deleteUser(HttpServletRequest request,
+	public ResponseEntity<ApiResponse<Void>> deleteUser(HttpServletRequest request,
 			HttpServletResponse response,
 			@RequestBody UserDeleteRequestDto userDeleteRequest) {
 		HttpSession session = request.getSession(false);
@@ -106,7 +110,11 @@ public class UserController {
 		cookie.setPath("/");
 		cookie.setMaxAge(0);
 		response.addCookie(cookie);
+		// 삭제시 응답 메세지 추가
+		String message = user.getUserName() + "(님)이 삭제되었습니다!";
 
-		return ResponseEntity.noContent().build();
+		return ResponseEntity
+				.status(HttpStatus.NO_CONTENT)
+				.body(ApiResponse.success(HttpStatus.NO_CONTENT, message, null));
 	}
 }
