@@ -1,6 +1,7 @@
 package com.example.newsfeedproject.common.exception;
 
 import com.example.newsfeedproject.common.response.ApiResponse;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,13 @@ public class GlobalExceptionHandler {
 		return ResponseEntity
 				.badRequest()
 				.body(ApiResponse.error(HttpStatus.BAD_REQUEST, "입력값이 제약조건을 만족하지 않습니다."));
+	}
+	// 게시글 도메인 에러 - 엔터티 조회 실패
+	@ExceptionHandler(EntityNotFoundException.class)
+	public ResponseEntity<ApiResponse<Void>> handleEntityNotFoundException(EntityNotFoundException e) {
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.body(ApiResponse.error(HttpStatus.NOT_FOUND, e.getMessage()));
 	}
 
 	// 런타임 에러

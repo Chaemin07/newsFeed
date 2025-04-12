@@ -67,8 +67,9 @@ public class LoginController {
         // 서버에 세션 저장
         SessionManager.setLoginUser(session, userInfo);
 
+        String message = "안녕하세요 " + userInfo.getUserName() + "님, 반갑습니다!";
   //return new ResponseEntity<>(userInfo, HttpStatus.OK);
-        return ResponseEntity.ok(ApiResponse.success(userInfo));
+        return ResponseEntity.ok(ApiResponse.success(message,userInfo));
     }
 
 
