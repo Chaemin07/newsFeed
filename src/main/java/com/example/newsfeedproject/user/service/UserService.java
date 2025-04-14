@@ -32,9 +32,11 @@ public class UserService {
 		if (!ValidationUtils.isValidPassword(request.getPassword())) {
 			throw new CustomException(ErrorCode.INVALID_PASSWORD_FORMAT);
 		}
-		if (userRepository.existsByEmailAndIsDeletedFalse(request.getEmail())) {
+		if (userRepository.findByEmail(request.getEmail()).isPresent()) {
 			throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
 		}
+
+
 
 		User user = User.builder()
 				.email(request.getEmail())
