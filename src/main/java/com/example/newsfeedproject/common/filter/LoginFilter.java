@@ -1,0 +1,101 @@
+package com.example.newsfeedproject.common.filter;
+
+import com.example.newsfeedproject.auth.dto.LoginResponseDto;
+import com.example.newsfeedproject.auth.SessionManager;
+import com.example.newsfeedproject.common.exception.CustomException;
+import com.example.newsfeedproject.common.exception.ErrorCode;
+import com.example.newsfeedproject.common.utils.ErrorResponseUtil;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.PatternMatchUtils;
+
+import java.io.IOException;
+import java.util.List;
+
+
+/**
+ * 로그인 필터 클래스.
+ * <p>
+ * 인증이 필요한 요청에 대해 로그인 여부를 확인하고,
+ * 로그인되지 않은 사용자의 접근을 차단하는 역할을 합니다.
+ * 로그인 없이 접근 가능한 URI(화이트리스트)는 검사 대상에서 제외됩니다.
+ * </p>
+ *
+ * <p><b>주요 기능:</b></p>
+ * <ul>
+ *     <li>요청 URI가 인증이 필요한 경로인지 확인</li>
+ *     <li>필요한 경우 세션을 조회하여 로그인 사용자 정보 확인</li>
+ *     <li>로그인하지 않은 사용자라면 예외 발생</li>
+ *     <li>정상 로그인 사용자라면 다음 필터로 요청 전달</li>
+ * </ul>
+ */
+@Slf4j
+public class LoginFilter implements Filter {
+    /**
+     * 로그인 없이 접근 가능한 URI 목록 (화이트리스트)
+     * 이 경로들은 인증 검사에서 제외됩니다.
+     */
+    // 회원가입, 로그인 화이트 리스트
+    private static final List<String> WHITE_LIST = List.of(
+            "/api/users/signup",
+            "/auth/login"
+    );
+    /**
+     * 로그인 여부를 확인하는 필터 로직.
+     * 인증이 필요한 URI에 대해 로그인된 세션이 없을 경우 예외를 발생시킵니다.
+     *
+     * @param request  서블릿 요청 객체
+     * @param response 서블릿 응답 객체
+     * @param chain    필터 체인
+     * @throws IOException      입출력 예외 발생 시
+     * @throws ServletException 서블릿 처리 예외 발생 시
+     */
+    @Override
+    public void doFilter(ServletRequest request,
+                         ServletResponse response,
+                         FilterChain chain
+    ) throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        String requestURI = httpRequest.getRequestURI();
+
+        if (!isWhiteList(requestURI)) {
+            HttpSession session = httpRequest.getSession(false);
+            // 세션x,
+            if (session == null) {
+                log.warn("세션이 없습니다");
+                // json으로 보내기
+                ErrorResponseUtil.setErrorResponse(httpResponse,ErrorCode.LOGIN_REQUIRED);
+                return;
+            }
+            //  세션은 있지만 유저가 null
+            LoginResponseDto user = SessionManager.getLoginUser(session);
+            if (user == null) {
+                log.warn("로그인 정보가 없습니다!");
+                ErrorResponseUtil.setErrorResponse(httpResponse,ErrorCode.LOGIN_REQUIRED);
+                return;
+            }
+        }
+
+        chain.doFilter(request, response);
+    }
+
+
+    /**
+     * 요청 URI가 로그인 없이 접근 가능한 화이트리스트에 포함되어 있는지 확인합니다.
+     *
+     * @param requestURI 현재 요청 URI
+     * @return 화이트리스트에 포함되어 있으면 true, 그렇지 않으면 false
+     */
+    private boolean isWhiteList(String requestURI) {
+
+        return PatternMatchUtils.simpleMatch(WHITE_LIST.toArray(new String[0]), requestURI);
+    }
+
+}
+
+
+
