@@ -25,7 +25,7 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 
 	@Transactional
-	public void signup(UserSignupRequestDto request) {
+	public UserSignupResponseDto signup(UserSignupRequestDto request) {
 		if (!ValidationUtils.isValidEmail(request.getEmail())) {
 			throw new CustomException(ErrorCode.INVALID_EMAIL_FORMAT);
 		}
@@ -45,6 +45,13 @@ public class UserService {
 				.build();
 
 		userRepository.save(user);
+		// 회원가입시 응답dto 추가
+		UserSignupResponseDto responseDto = UserSignupResponseDto.builder()
+				.userId(user.getId())
+				.nickname(user.getNickname())
+				.email(user.getEmail())
+				.build();
+		return responseDto;
 	}
 
 	public UserProfileResponseDto getProfile(Long userId) {
@@ -121,7 +128,7 @@ public class UserService {
 		// 로그인 성공
 		LoginResponseDto responseDto = LoginResponseDto.builder()
 				.userId(user.getId())
-				.userName(user.getNickname()) // TODO 이름을 nickname으로 할건지, name으로 할건지
+				.userName(user.getNickname())
 				.userEmail(user.getEmail())
 				.isActive(!user.isDeleted())// 계정 활성 여부
 				.build();

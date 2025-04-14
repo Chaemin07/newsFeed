@@ -1,27 +1,67 @@
 package com.example.newsfeedproject.common.exception;
 
+import com.example.newsfeedproject.common.response.ApiResponse;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+	// 커스텀 예외 처리
 	@ExceptionHandler(CustomException.class)
-	public ResponseEntity<String> handleCustomException(CustomException e) {
+	public ResponseEntity<ApiResponse<Void>> handleCustomException(CustomException e) {
+		ErrorCode errorCode = e.getErrorCode();
+		// 커스텀 예외처리 에러 로그
+		log.warn("[CustomException] code={}, message={}", e.getErrorCode().getStatus(), e.getMessage());
 		return ResponseEntity
-				.status(e.getErrorCode().getStatus())
-				.body(e.getErrorCode().getMessage());
+				.status(errorCode.getStatus())
+				.body(ApiResponse.error(errorCode.getStatus().value(), errorCode.getMessage()));
 	}
 
-	@ExceptionHandler(MethodArgumentNotValidException.class)//valid 위반 통합에러 처리기
-	public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-		return ResponseEntity.badRequest().body("Global Error: Required values must not blank and have proper value.");
+	//valid 위반 통합에러 처리기
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+		return ResponseEntity
+				.badRequest()// 400
+				.body(ApiResponse.error(HttpStatus.BAD_REQUEST, "요청 필드값이 유효하지 않습니다."));
 	}
-	@ExceptionHandler(ConstraintViolationException.class)//validated 위반 통합 에러 처리기
-	public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException ex) {
-		return ResponseEntity.badRequest().body("Global Error: browsing target must be specified.");
+
+	//validated 위반 통합 에러 처리기
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<ApiResponse<Void>> handleConstraintViolationException(ConstraintViolationException ex) {
+		return ResponseEntity
+				.badRequest()
+				.body(ApiResponse.error(HttpStatus.BAD_REQUEST, "입력값이 제약조건을 만족하지 않습니다."));
+	}
+	// 게시글 도메인 에러 - 엔터티 조회 실패
+	@ExceptionHandler(EntityNotFoundException.class)
+	public ResponseEntity<ApiResponse<Void>> handleEntityNotFoundException(EntityNotFoundException e) {
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.body(ApiResponse.error(HttpStatus.NOT_FOUND, e.getMessage()));
+	}
+
+	// 런타임 에러
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<ApiResponse<Void>> handleRuntimeException(RuntimeException e) {
+		// 런타임 예외처리 에러 로그
+		log.error("[RuntimeException] message = {}", e.getMessage(), e);
+		return ResponseEntity
+				.internalServerError()// 500 서버 에러
+				.body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다: " + e.getMessage()));
+	}
+
+	// 모든 예외처리 - 마지막 예외처리
+	public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
+		return ResponseEntity
+				.internalServerError() // 500 서버 에러
+				.body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버오류가 발생했습니다."));
 	}
 }
